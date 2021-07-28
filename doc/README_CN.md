@@ -193,7 +193,8 @@ Kunyu的自动补全支持大小写，命令记录等，使用Tab进行补全，
 
 # 0x06 Contributions
 
-**[风起@knownsec 404](https://github.com/wikiZ) **
+[风起@knownsec 404](https://github.com/wikiZ)
+
 [wh0am1i@knownsec 404](https://github.com/wh0am1i)  
 [fenix@knownsec 404](https://github.com/13ph03nix)  
 [0x7F@knownsec 404](https://github.com/0x7Fancy)
