@@ -1,0 +1,6 @@
+include MANIFEST.in
+include README.md
+include CHANGELOG
+recursive-include kunyu *
+recursive-exclude kunyu __pycache__
+recursive-exclude kunyu *.py[co]
