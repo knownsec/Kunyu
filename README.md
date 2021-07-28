@@ -49,7 +49,7 @@ When you run the program for the first time, you can initialize by entering the 
 ```
 kunyu init --apikey <your zoomeye key> --seebug <your seebug key>
 ```
-![](./images/setinfo.png)
+![](https://gitee.com/OnlyZG/kunyu-images/raw/master/images/setinfo.png)
 
 # 0x03 Tool instructions
 
@@ -58,7 +58,7 @@ kunyu init --apikey <your zoomeye key> --seebug <your seebug key>
 ```
 kunyu console
 ```
-![](./images/infos.png)
+![](https://gitee.com/OnlyZG/kunyu-images/raw/master/images/infos.png)
 
 **ZoomEye**
 
@@ -95,43 +95,43 @@ ZoomEye:
 
 **User information query**
 
-![](./images/userinfo.png)
+![](https://gitee.com/OnlyZG/kunyu-images/raw/master/images/userinfo.png)
 
 **HOST host search**
 
-![](./images/searchhost.png)
+![](https://gitee.com/OnlyZG/kunyu-images/raw/master/images/searchhost.png)
 
 **Web host search**
 
-![](./images/searchweb.png)
+![](https://gitee.com/OnlyZG/kunyu-images/raw/master/images/searchweb.png)
 
 **Batch IP search**
 
-![](./images/searchbatch.png)
+![](https://gitee.com/OnlyZG/kunyu-images/raw/master/images/searchbatch.png)
 
 **Icon Search**
 
 When collecting corporate assets, we can use this method to retrieve the same ico icon assets, which usually has a good effect when associating related corporate assets. But it should be noted that if some sites also use this ico icon, irrelevant assets may be associated (but people who are bored with other people's ico icons are always in the minority). Support url or local file search.
 
-![](./images/searchico.png)
+![](https://gitee.com/OnlyZG/kunyu-images/raw/master/images/searchico.png)
 
 **SSL certificate search**
 
 Query through the serial number of the SSL certificate, so that the associated assets are more accurate, and services that use the same certificate can be searched. When you encounter an https site, you can use this method.
 
-![](./images/searchcert.png)
+![](https://gitee.com/OnlyZG/kunyu-images/raw/master/images/searchcert.png)
 
 **Associated Domain/Subdomain Search**
 
 Search for associated domain names and subdomains, and query associated domain names by default. Two modes can be set by setting the dtype parameter.
 
-![](./images/searchdomain.png)
+![](https://gitee.com/OnlyZG/kunyu-images/raw/master/images/searchdomain.png)
 
 **Seebug vulnerability query**
 
 You can query historical related vulnerabilities by entering information about the framework and equipment you want to find, but you need to note that only English is supported, and improvements and upgrades will be made later.
 
-![](./images/seebug.png)
+![](https://gitee.com/OnlyZG/kunyu-images/raw/master/images/seebug.png)
 
 **Setting parameters**
 
@@ -139,15 +139,15 @@ When set page = 2, the returned results are 40. You can modify the page paramete
 
 The configurable parameters and the current values of the parameters are displayed through show.
 
-![](./images/show.png)
+![](https://gitee.com/OnlyZG/kunyu-images/raw/master/images/show.png)
 
-![](./images/set.png)
+![](https://gitee.com/OnlyZG/kunyu-images/raw/master/images/set.png)
 
 **Data result**
 
 All search results are saved in the user's root directory, and the directory is created based on the current timestamp. All query results of a single start are stored in an Excel format under one directory, giving a more intuitive experience. The output path can be returned through the ExportPath command.
 
-![](./images/output.png)
+![](https://gitee.com/OnlyZG/kunyu-images/raw/master/images/output.png)
 
 
 # 0x04 Loading
@@ -207,4 +207,4 @@ If you have any questions, you can submit an issue under the project, or contact
 
 Scan the QR code to add the ZoomEye staff member WeChat, and remark Kunyu, which will draw everyone to the ZoomEye cyberspace surveying and mapping exchange group
 
-![](./images/yunying.jpg)
+![](https://gitee.com/OnlyZG/kunyu-images/raw/master/images/yunying.jpg)
