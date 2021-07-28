@@ -119,7 +119,7 @@ When collecting corporate assets, we can use this method to retrieve the same ic
 
 Query through the serial number of the SSL certificate, so that the associated assets are more accurate, and services that use the same certificate can be searched. When you encounter an https site, you can use this method.
 
-![](./searchcert.png)
+![](./images/searchcert.png)
 
 **Associated Domain/Subdomain Search**
 
