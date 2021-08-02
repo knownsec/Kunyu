@@ -45,7 +45,7 @@ args = parser.parse_args()
 path = os.path.expanduser("~/")
 conf = configparser.ConfigParser()
 
-__path = os.path.join(path, "kunyu.ini")
+__path = os.path.join(path, ".kunyu.ini")
 
 # Read config.user.ini
 conf.read(__path)
