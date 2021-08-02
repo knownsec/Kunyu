@@ -42,6 +42,8 @@ Linux:
 Windows:
 	cd kunyu
 	python3 console.py
+	
+P.S. Windows also supports python3 setup.py install
 ```
 
 # 0x02 Configuration instructions
