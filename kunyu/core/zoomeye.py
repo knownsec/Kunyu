@@ -10,6 +10,7 @@
 import json
 import random
 import sys
+import re
 
 import requests
 from rich.table import Table
@@ -55,9 +56,14 @@ class ZoomeyeSearch(object):
             nonlocal func
             req_list = []
             login_url = func(self, *args, **kwargs)
-            for num in range(int(self.page)):
-                params['query'], params['page'] = self.search, (num + 1)
-                req_list.append(self.__request(login_url, data=params, headers=self.headers))
+            try:
+                for num in range(int(self.page)):
+                    params['query'], params['page'] = self.search, (num + 1)
+                    req_list.append(self.__request(login_url, data=params, headers=self.headers))
+            except requests.HTTPError as err:
+                logger.warning(err)
+            except requests.exceptions.ConnectionError:
+                logger.error("Network timeout")
             return req_list
 
         return wrapper
@@ -69,31 +75,24 @@ class ZoomeyeSearch(object):
             which is displayed on the terminal after processing by the presentation layer.
         """
         # The API is not available for tourist users
-
-        try:
-            if self.method == "GET":
-                resp = requests.get(
-                    login_url,
-                    data=data,
-                    headers=headers,
-                    timeout=5
-                )
-            else:
-                resp = requests.post(
-                    login_url,
-                    data=data,
-                    headers=headers,
-                    timeout=5
-                )
-            self.check_status(resp)
-            self.check_error(resp.json())
-
-            return json.loads(resp.text)
-
-        except requests.HTTPError as err:
-            return logger.warning(err)
-        except requests.exceptions.ConnectionError:
-            return logger.error("Network timeout")
+        if self.method == "GET":
+            resp = requests.get(
+                login_url,
+                data=data,
+                headers=headers,
+                timeout=5
+            )
+        else:
+            resp = requests.post(
+                login_url,
+                data=data,
+                headers=headers,
+                timeout=5
+            )
+        self.check_status(resp)
+        self.check_error(resp.json())
+        # return query data
+        return json.loads(resp.text)
 
     # Check return http status code
     def check_status(self, resp):
@@ -137,8 +136,6 @@ def _dork_search(self, url, search, page):
 
     except ArithmeticError:
         return logger.warning("Please enter the correct number of queries!")
-    except requests.exceptions.ConnectionError:
-        return logger.error("Network timeout")
     except Exception:
         return logger.warning("Search for parameter exceptions!")
 
@@ -174,7 +171,7 @@ class ZoomEye:
         exit                                      Exit KunYu & """
 
     # ZoomEye Command List
-    Command_Info = ["help", "info", "set", "Seebug", "SearchWeb", "SearchHost", "SearchIcon", "SearchBatch", "SearchCert", "SearchDomain", "ExportPath","show", "clear", "exit"]
+    Command_Info = ["help", "info", "set", "Seebug", "SearchWeb", "SearchHost", "SearchIcon", "SearchBatch", "SearchCert", "SearchDomain", "ExportPath", "show", "clear", "exit"]
 
     def __init__(self):
         self.fields_tables = None
@@ -206,10 +203,6 @@ class ZoomEye:
 
         # Get data information
         for result in _dork_search(api_url, search, self.page):
-            # Check return data Whether it is empty
-            if not result:
-                return logger.error("No data returned")
-
             try:
                 total = result['total']
                 webapp_name, server_name, db_name, system_os, language = "", "", "", "", ""
@@ -270,13 +263,15 @@ class ZoomEye:
 
                 if export_list:
                     export_xls(export_list, FIELDS)
-            except Exception as e:
-                print(e)
+            except Exception:
                 continue
 
-        console.log("search result amount:", total, style="green")
-        console.print(table)
-        logger.info("Search information retrieval is completed\n")
+        if total > 0:
+            console.log("search result amount:", total, style="green")
+            console.print(table)
+            logger.info("Search information retrieval is completed\n")
+        else:
+            logger.error("The query result is empty\n")
         return console
 
     @classmethod
@@ -327,8 +322,10 @@ class ZoomEye:
     @classmethod
     # ZoomEye Icon Image Search
     def command_searchicon(cls, filename):
-        if encode.encode_md5(filename) is not None:
-            return cls.__command_search(cls, "iconhash:" + str(encode.encode_md5(filename)))
+        icon_hash = str(encode.encode_mmh3(filename))
+        if icon_hash != "":
+            logger.info("iconhash:"+icon_hash)
+            return cls.command_searchhost("iconhash:" + icon_hash)
 
     @classmethod
     # Get SeeBug vulnerability information
@@ -341,5 +338,6 @@ class ZoomEye:
             logger_console.info('[{}] - [{}]'.format(vuln.name, vuln.id))
 
         logger.info("Seebug Search retrieval is completed\n")
+
 
 

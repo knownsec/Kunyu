@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.2] - 2021-8-2
+### Added
+- optimizedthe problem of outputting an empty table when no data is returned
+- optimized  the problem that no data is returned when the number of parameters in the page is exceeded
+- update Use mmh3 encoding when querying iconhash
+- add Output the current icon query statement
+- update User credentials are saved as hidden files
 
 ## [v1.1] - 2021-7-13
 ### Added
