@@ -38,7 +38,7 @@ class EncodeHash:
 
     def __call__(self, *args, **kwargs):
         self.filename, self.status = self.func(*args, **kwargs)
-        icohash = EncodeHash.http_encode(self) if self.check_http() else self.http_encode()
+        icohash = EncodeHash.http_encode(self) if self.check_http() else EncodeHash.file_encode(self)
         return icohash if icohash is not None else logger.warning("The hash was not successfully computed")
 
     def check_http(self):
