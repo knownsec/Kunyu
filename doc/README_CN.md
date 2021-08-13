@@ -42,7 +42,7 @@ Windows:
 	cd kunyu
 	python3 console.py
 	
-P.S. Windows同样支持python3 setup.py install
+P.S. Windows同样支持python3 setup.py install，也可以使用pip install kunyu进行安装更新
 ```
 
 # 0x02 配置说明
@@ -72,13 +72,15 @@ Global commands:
         SearchBatch <File>                        Batch search Host
         SearchCert <Domain>                       SSL certificate Search
         SearchDomain <Domain>                     Domain name associated/subdomain search
+        EncodeHash <encryption> <query>     	  Encryption method interface 
         Seebug <Query>                            Search Seebug vulnerability information
         set <Option>                              Set arguments values
-        ExportPath                                Returns the path of the output file
+        Pocsuite3                                 Invoke the pocsuite component
+        ExportPath                                Returns the path of the output file 
         clear                                     Clear the console screen
         show                                      Show can set options
         help                                      Print Help info
-        exit                                      Exit KunYu &
+        exit                                      Exit KunYu & 
 ```
 
 **OPTIONS**
@@ -128,6 +130,12 @@ ZoomEye:
 
 ![](../images/searchdomain.png)
 
+**编码哈希计算**
+
+在一些场景下，可以通过该命令进行常用的HASH加密/编码，如：BASE64、MD5、mmh3、HEX编码，通过这种方式进行调试。
+
+![](../images/encode.png)
+
 **Seebug漏洞查询**
 
 通过输入想要查找的框架、设备等信息，查询历史相关漏洞，但是需要注意仅支持英文，这里后期会进行改进，升级。
@@ -143,6 +151,12 @@ ZoomEye:
 ![](../images/show.png)
 
 ![](../images/set.png)
+
+**Pocsuite3 联动**
+
+在v1.3.1之后的版本中，您可以使用kunyu进行联动pocsuite3的console模式进行一体化的使用。
+
+![](../images/pocsuite.png)
 
 **数据结果**
 
@@ -192,6 +206,23 @@ ico图标搜索既支持URL检索，又支持本地ico图标文件搜索，这�
 **7、自动补全**
 
 Kunyu的自动补全支持大小写，命令记录等，使用Tab进行补全，用法参见Metasploit即可。
+
+**8、关于pip install kunyu使用时报错的问题**
+
+在使用pip install kunyu时报以下错误：
+`File "C:\Users\风起\AppData\Local\Programs\Python\Python37\Scripts\kunyu-script.py", line 1 SyntaxError: Non-UTF-8 code starting with '\xb7' in file C:\Users\风起\AppData\Local\Programs\Python\Python37\Scripts\kunyu-script.py on line 1, but no encoding declared; see http://python.org/dev/peps/pep-0263/ for details`
+
+解决方案：
+修改C:\Users\风起\AppData\Local\Programs\Python\Python37\Scripts\kunyu-script.py文件，在文件开头添加# encoding: utf-8
+然后保存即可正常使用，该bug出现原因为用户目录路径存在中文名，通常出现在windows上。
+
+**9、Pocsuite3模块POC存放目录**
+
+对于使用pocsuite3模块时，如果想要新增POC模块，则可以在 **项目目录/pocsuite3/pocs/** 添加POC文件。
+
+**10、Pocsuite3模块POC缺失问题**
+
+使用Pocsuite命令联动时，如果是已经打包好的Kunyu版本，则poc已经被固定，这时修改poc目录是无法新增模块的，这时可以通过重新打包的方式，或者使用 **项目目录/kunyu/console.py** 运行kunyu可实时更新poc模块。
 
 # 0x06 Contributions
 

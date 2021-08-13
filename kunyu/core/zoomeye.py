@@ -7,24 +7,32 @@
 @Time: 2021/6/24 22:18
 '''
 
+import os
+import sys
 import json
 import random
-import sys
-import re
 
 import requests
 from rich.table import Table
 from rich.console import Console
 
+try:
+    import pocsuite3
+except ImportError:
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file__)), os.path.pardir)))
+from pocsuite3.cli import check_environment, module_path
+from pocsuite3 import set_paths
+from pocsuite3.lib.core.interpreter import PocsuiteInterpreter
+from pocsuite3.lib.core.option import init_options
+
 from kunyu.core import conf
-from kunyu.config.setting import UA
 import kunyu.lib.encode as encode
+from kunyu.config.setting import UA
 from kunyu.lib.export import export_xls
 from kunyu.lib.batchfile import get_file
 from kunyu.core.seebug import Seebug
 from kunyu.utils.log import logger, logger_console
 from kunyu.config.__version__ import __help__, init
-
 
 console = Console(color_system="auto", record=True)
 
@@ -80,14 +88,14 @@ class ZoomeyeSearch(object):
                 login_url,
                 data=data,
                 headers=headers,
-                timeout=5
+                timeout=10
             )
         else:
             resp = requests.post(
                 login_url,
                 data=data,
                 headers=headers,
-                timeout=5
+                timeout=10
             )
         self.check_status(resp)
         self.check_error(resp.json())
@@ -153,7 +161,7 @@ class ZoomEye:
     page = 1
     dtype = 0
     btype = "host"
-    
+
     help = """Global commands:
         info                                      Print User info
         SearchHost <query>                        Basic Host search
@@ -162,8 +170,10 @@ class ZoomEye:
         SearchBatch <File>                        Batch search Host
         SearchCert <Domain>                       SSL certificate Search
         SearchDomain <Domain>                     Domain name associated/subdomain search
+        EncodeHash <encryption> <query>           Encryption method interface (base64/hex/md5/mmh3)
         Seebug <Query>                            Search Seebug vulnerability information
         set <Option>                              Set arguments values
+        Pocsuite3                                 Invoke the pocsuite component
         ExportPath                                Returns the path of the output file 
         clear                                     Clear the console screen
         show                                      Show can set options
@@ -171,7 +181,8 @@ class ZoomEye:
         exit                                      Exit KunYu & """
 
     # ZoomEye Command List
-    Command_Info = ["help", "info", "set", "Seebug", "SearchWeb", "SearchHost", "SearchIcon", "SearchBatch", "SearchCert", "SearchDomain", "ExportPath", "show", "clear", "exit"]
+    Command_Info = ["help", "info", "set", "Seebug", "SearchWeb", "SearchHost", "SearchIcon", "SearchBatch",
+                    "SearchCert", "SearchDomain", "EncodeHash", "Pocsuite3", "ExportPath", "show", "clear", "exit"]
 
     def __init__(self):
         self.fields_tables = None
@@ -208,7 +219,7 @@ class ZoomEye:
                 webapp_name, server_name, db_name, system_os, language = "", "", "", "", ""
                 for i in range(len(result[result_type])):
                     num += 1
-                    title,lat,lon = "", "", ""
+                    title, lat, lon = "", "", ""
                     data = self.convert(result[result_type][i])
                     if api_url == HOST_SEARCH_API:
                         if data.portinfo.title:
@@ -219,12 +230,12 @@ class ZoomEye:
                         # Set the output field
                         table.add_row(str(num), data.ip, str(data.portinfo.port), str(data.portinfo.service),
                                       str(data.portinfo.app), str(data.geoinfo.isp), str(data.geoinfo.country.names.en),
-                                      str(data.geoinfo.city.names.en),str(title), str(lat),str(lon))
+                                      str(data.geoinfo.city.names.en), str(title), str(lat), str(lon))
 
                         # Set the exported fields
                         export_host = [str(num), data.ip, str(data.portinfo.port), str(data.portinfo.service),
-                                      str(data.portinfo.app), str(data.geoinfo.isp), str(data.geoinfo.country.names.en),
-                                      str(data.geoinfo.city.names.en),str(title), str(lat),str(lon)]
+                                       str(data.portinfo.app), str(data.geoinfo.isp), str(data.geoinfo.country.names.en),
+                                       str(data.geoinfo.city.names.en), str(title), str(lat), str(lon)]
 
                     elif api_url == WEB_SEARCH_API:
                         # Because of the problem of returning the default value of the field
@@ -324,8 +335,27 @@ class ZoomEye:
     def command_searchicon(cls, filename):
         icon_hash = str(encode.encode_mmh3(filename))
         if icon_hash != "":
-            logger.info("iconhash:"+icon_hash)
+            logger.info("iconhash:" + icon_hash)
             return cls.command_searchhost("iconhash:" + icon_hash)
+
+    @classmethod
+    # Encode hex/md5/mmh3/base64 Hash
+    def command_encodehash(cls, args):
+        try:
+            command, _, args = args.strip().partition(" ")
+            if args == "":
+                raise ArithmeticError
+            command_handler = getattr(encode, "encode_{}".format(command))
+            logger.info("{} : {}".format(
+                command,
+                command_handler(args.strip())
+            ))
+
+        except ArithmeticError:
+            logger.warning("Please specify the encryption mode")
+
+        except Exception as err:
+            logger.warning(err)
 
     @classmethod
     # Get SeeBug vulnerability information
@@ -339,5 +369,11 @@ class ZoomEye:
 
         logger.info("Seebug Search retrieval is completed\n")
 
-
-
+    @classmethod
+    # Invoke the pocsuite component
+    def command_pocsuite3(cls, *args, **kwargs):
+        check_environment()
+        set_paths(module_path())
+        init_options()
+        poc = PocsuiteInterpreter()
+        poc.start()

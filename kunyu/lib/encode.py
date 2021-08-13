@@ -9,6 +9,7 @@
 
 import re
 import os
+import base64
 import codecs
 import hashlib
 import socket
@@ -38,7 +39,7 @@ class EncodeHash:
 
     def __call__(self, *args, **kwargs):
         self.filename, self.status = self.func(*args, **kwargs)
-        icohash = EncodeHash.http_encode(self) if self.check_http() else EncodeHash.file_encode(self)
+        icohash = EncodeHash.http_encode(self) if self.check_http() else self.file_encode()
         return icohash if icohash is not None else logger.warning("The hash was not successfully computed")
 
     def check_http(self):
@@ -89,8 +90,19 @@ def encode_mmh3(filename):
     return filename, False
 
 
+# encode hex
+def encode_hex(string):
+    return int(string, 16)
+
+
+# encode base64
+def encode_base64(string):
+    bytes_str = string.encode("utf-8")
+    return str(base64.b64encode(bytes_str).decode("utf-8"))
+
+
 # Cert series number calculate Hash
-def cert_encode(hostname, system=16):
+def cert_encode(hostname):
     try:
         c = ssl.create_default_context()
         host = re.sub(HTTP_CHECK_REGEX, '', hostname)
@@ -98,7 +110,7 @@ def cert_encode(hostname, system=16):
         s.settimeout(5)
         s.connect((host, 443))
         # Return Hexadecimal code
-        return int(s.getpeercert()["serialNumber"], system)
+        return encode_hex(s.getpeercert()["serialNumber"])
 
     except Exception:
         return logger.warning("Please confirm that the target uses HTTPS or is accessible")

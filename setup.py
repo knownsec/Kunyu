@@ -31,7 +31,7 @@ setup(
     version=__version__,
     description='kunyu is Cyberspace Resources Surveying and Mapping auxiliary tools',
     long_description=README,
-    long_description_content_type='text/x-rst',
+    long_description_content_type='text/markdown',
     author='风起 <onlyzaliks@gmail.com>',
     url='',
     packages=find_packages(),

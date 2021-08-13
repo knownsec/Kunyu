@@ -13,7 +13,6 @@ import sys
 module_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(1, module_path)
 
-
 from kunyu.config.__version__ import __help__, init
 from kunyu.core.console import KunyuInterpreter
 from kunyu.utils.log import logger_console
@@ -29,6 +28,7 @@ def main():
         KunyuInterpreter().main()
     except Exception:
         logger_console.info(__help__.format(datil=init))
+
 
 if __name__ == "__main__":
     main()
