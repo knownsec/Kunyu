@@ -43,7 +43,8 @@ Windows:
 	cd kunyu
 	python3 console.py
 	
-P.S. Windows also supports python3 setup.py install
+P.S. Windows also supports python3 setup.py install.
+You can also use pip install kunyu to install and update.
 ```
 
 # 0x02 Configuration instructions
@@ -73,13 +74,15 @@ Global commands:
         SearchBatch <File>                        Batch search Host
         SearchCert <Domain>                       SSL certificate Search
         SearchDomain <Domain>                     Domain name associated/subdomain search
+        EncodeHash <encryption> <query>           Encryption method interface 
         Seebug <Query>                            Search Seebug vulnerability information
         set <Option>                              Set arguments values
-        ExportPath                                Returns the path of the output file
+        Pocsuite3                                 Invoke the pocsuite component
+        ExportPath                                Returns the path of the output file 
         clear                                     Clear the console screen
         show                                      Show can set options
         help                                      Print Help info
-        exit                                      Exit KunYu &
+        exit                                      Exit KunYu & 
 ```
 
 **OPTIONS**
@@ -129,6 +132,12 @@ Search for associated domain names and subdomains, and query associated domain n
 
 ![](./images/searchdomain.png)
 
+**Encoding hash calculation**
+
+In some scenarios, you can use this command to perform common HASH encryption/encoding, such as BASE64, MD5, mmh3, HEX encoding, and debug in this way.
+
+![](./images/encode.png)
+
 **Seebug vulnerability query**
 
 You can query historical related vulnerabilities by entering information about the framework and equipment you want to find, but you need to note that only English is supported, and improvements and upgrades will be made later.
@@ -144,6 +153,12 @@ The configurable parameters and the current values of the parameters are display
 ![](./images/show.png)
 
 ![](./images/set.png)
+
+**Pocsuite linkage**
+
+In versions after v1.3.1, you can use kunyu to link the console mode of pocsuite3 for integrated use.
+
+![](./images/pocsuite.png)
 
 **Data result**
 
@@ -193,6 +208,24 @@ By default, your query data is in the Kunyu folder under the user directory. You
 **7、Autocomplete**
 
 Kunyu's auto-completion supports upper and lower case, command logging, etc., use Tab to complete, please refer to Metasploit for usage.
+
+**8. Regarding the error when using pip install kunyu**
+
+The following error was reported when using pip install kunyu:
+`File "C:\Users\风起\AppData\Local\Programs\Python\Python37\Scripts\kunyu-script.py", line 1 SyntaxError: Non-UTF-8 code starting with'\xb7' in file C: \Users\风起\AppData\Local\Programs\Python\Python37\Scripts\kunyu-script.py on line 1, but no encoding declared; see http://python.org/dev/peps/pep-0263/ for details`
+
+**solution:**
+Modify the C:\Users\风起\AppData\Local\Programs\Python\Python37\Scripts\kunyu-script.py file and add # encoding: utf-8 at the beginning of the file.
+
+Then save it and you can use it normally. The bug appears because there is a Chinese name in the user's directory path, which usually appears on windows.
+
+**9. Pocsuite3 module POC storage directory**
+
+When using the pocsuite3 module, if you want to add a new POC module, you can add a POC file in **project directory/pocsuite3/pocs/**.
+
+**10. Pocsuite3 module POC missing issue**
+
+When using the Pocsuite command linkage, if it is a packaged Kunyu version, the poc has been fixed. At this time, modifying the poc directory cannot add new modules. At this time, you can repackage it or use the **project directory/kunyu /console.py** Run kunyu to update the poc module in real time.
 
 # 0x06 Contributions
 

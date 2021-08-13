@@ -12,6 +12,7 @@ import sys
 import platform
 import subprocess
 
+from colorama import init
 from kunyu.config import setting
 from rich.console import Console
 from kunyu.utils.log import logger
@@ -20,9 +21,10 @@ from kunyu.core.zoomeye import ZoomEye
 from kunyu.utils import readineng as readline
 from kunyu.config.__version__ import __introduction__
 
-
+init(autoreset=True)
 PLATFORM = platform.system()
-#Determine the operating system clear screen command
+
+# Determine the operating system clear screen command
 cmd = "cls" if PLATFORM == "Windows" else "clear"
 console = Console(color_system="auto")
 
@@ -33,6 +35,7 @@ def readline_available():
     it is not in Python default installation on Windows
     """
     return readline._readline is not None
+
 
 # TAB auto completion
 def auto_completion(completion=None, console=None):
@@ -46,7 +49,6 @@ def auto_completion(completion=None, console=None):
 class BaseInterpreter(object):
     global_help = ""
     OUTPUT_PATH = None
-
 
     def __init__(self):
         self.module = "ZoomEye"
@@ -85,7 +87,7 @@ class BaseInterpreter(object):
     @property
     def prompt(self):
         """ Returns prompt string """
-        return "kunyu\033[31;1m ({})\033[0m > ".format(self.module)
+        return "Kunyu (\033[31;1m{}\033[0m) > ".format(self.module)
 
     def get_command_handler(self, command):
         """ Parsing command and returning appropriate handler.
@@ -158,6 +160,7 @@ class BaseInterpreter(object):
     def start(self):
         # logger_console(self.global_help)
         while True:
+            self.setup()
             try:
                 command, args = self.parse_line(input(self.prompt))
                 command = command.lower()
@@ -176,7 +179,8 @@ class BaseInterpreter(object):
                 except OSError:
                     pass
                 sys.exit(0)
-            except Exception:
+            except Exception as err:
+                print(err)
                 continue
 
 
