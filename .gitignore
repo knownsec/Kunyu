@@ -1,5 +1,0 @@
-# virtual environments
-venv/
-build/
-dist/
-kunyu.egg-info/

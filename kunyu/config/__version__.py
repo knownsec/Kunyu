@@ -15,7 +15,7 @@ __license__ = 'GPL-2.0'
 __python_version__ = sys.version.split()[0]
 __platform__ = platform.platform()
 __url__ = "https://github.com/knownsec/Kunyu"
-__version__ = '1.3.5'
+__version__ = '1.4.0'
 __author__ = '风起'
 __Team__ = 'KnownSec 404 Team'
 __author_email__ = 'onlyzaliks@gmail.com'
@@ -36,7 +36,7 @@ __introduction__ = """
 
 GitHub:{url}
 
-kunyu is Cyberspace Resources Surveying and Mapping auxiliary tools
+kunyu is Cyberspace Search Engine auxiliary tools
 
 {{datil}}
 
@@ -50,7 +50,7 @@ __help__ = """
 |_|\_\__,_|_| |_|\__, |\__,_| -v{version}
                  |___/         
 GitHub: https://github.com/knownsec/Kunyu/
-kunyu is Cyberspace Resources Surveying and Mapping auxiliary tools
+kunyu is Cyberspace Search Engine auxiliary tools
 {{datil}}
 """.format(version=__version__)
 
