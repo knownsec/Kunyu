@@ -31,7 +31,6 @@ For the use of kunyu, there can be many application scenarios, such as:
 
 ```
 git clone https://github.com/knownsec/Kunyu.git
-tar -xvf Kunyu.tar
 cd Kunyu
 pip3 install -r requirements.txt
 
@@ -42,9 +41,11 @@ Linux:
 Windows:
 	cd kunyu
 	python3 console.py
+
+PYPI:
+	pip3 install kunyu
 	
 P.S. Windows also supports python3 setup.py install.
-You can also use pip install kunyu to install and update.
 ```
 
 # 0x02 Configuration instructions
@@ -75,6 +76,7 @@ Global commands:
         SearchCert <Domain>                       SSL certificate Search
         SearchDomain <Domain>                     Domain name associated/subdomain search
         EncodeHash <encryption> <query>           Encryption method interface 
+        HostCrash <IP> <Domain>                   Host Header Scan hidden assets
         Seebug <Query>                            Search Seebug vulnerability information
         set <Option>                              Set arguments values
         Pocsuite3                                 Invoke the pocsuite component
@@ -126,6 +128,18 @@ Query through the serial number of the SSL certificate, so that the associated a
 
 ![](./images/searchcert.png)
 
+**Multi-factor query**
+
+Similarly, Kunyu also supports multi-factor conditional query related assets, which can be realized through ZoomEye logic operation syntax.
+
+![](./images/headersearch.png)
+
+**Feature Search**
+
+Through HTTP request packet features or website-related features, the same framework assets can be concatenated more accurately
+
+![](./images/factor.png)
+
 **Associated Domain/Subdomain Search**
 
 Search for associated domain names and subdomains, and query associated domain names by default. Two modes can be set by setting the dtype parameter.
@@ -159,6 +173,12 @@ The configurable parameters and the current values of the parameters are display
 In versions after v1.3.1, you can use kunyu to link the console mode of pocsuite3 for integrated use.
 
 ![](./images/pocsuite.png)
+
+**HOSTS head collision**
+
+Through the HOSTS collision, the hidden assets in the intranet can be effectively collided, and the intranet service can be accessed according to the ServerName domain name and IP configured in the middleware httpf.conf. This can be achieved by setting the local hosts file later, because the local hosts file takes precedence. The level is higher than DNS server resolution. Support reverse check through ZoomEye domain name library or read TXT file to get the list of domain names.
+
+![](./images/searchcrash.png)
 
 **Data result**
 
@@ -221,7 +241,7 @@ Then save it and you can use it normally. The bug appears because there is a Chi
 
 **9. Pocsuite3 module POC storage directory**
 
-When using the pocsuite3 module, if you want to add a new POC module, you can add a POC file in **project directory/pocsuite3/pocs/**.
+When using the pocsuite3 module, if you want to add a new POC module, you can add a POC file in **project directory/kunyu/pocs/**.
 
 **10. Pocsuite3 module POC missing issue**
 

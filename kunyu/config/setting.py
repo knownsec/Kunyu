@@ -9,18 +9,32 @@ This code file is used to set global parameters
 '''
 
 import os
+import re
+
+# ZoomEye API
+USER_INFO_API = "https://api.zoomeye.org/resources-info"
+HOST_SEARCH_API = "https://api.zoomeye.org/host/search"
+WEB_SEARCH_API = "https://api.zoomeye.org/web/search"
+BOTH_SEARCH_API = "https://api.zoomeye.org/both/search"
+DOMAIN_SEARCH_API = "https://api.zoomeye.org/domain/search"
 
 # Setting ZoomEye Query Fields
-ZOOMEYE_FIELDS_HOST = ["ID", "IP", "Port", "Protocol", "Service", "ISP", "Country", "City", "Title", "Latitude", "Longitude"]
-ZOOMEYE_FIELDS_WEB = ["ID", "IP", "URL", "Title", "OS", "WebApp", "DB", "Language", "Server"]
+ZOOMEYE_FIELDS_HOST = ["ID", "IP", "Port", "Protocol", "Service", "ISP", "Country", "City", "Title", "Time"]
+ZOOMEYE_FIELDS_WEB = ["ID", "IP", "URL", "Title", "OS", "WebApp", "DB", "Language", "Server", "Time"]
 ZOOMEYE_FIELDS_INFO = ["Plan", "Search", "Stats", "Interval"]
 ZOOMEYE_FIELDS_DOMAIN = ["ID", "Domain", "IP", "TimeStamp"]
+HOST_SCAN_INFO = ["IP", "Domain", "Title"]
 
+# Kunyu OUTPUT File Path
 OUTPUT_PATH = os.path.expanduser('~/kunyu/output/')
 
 # REGEX rule
 IP_ADDRESS_REGEX = r"(([01]{0,1}\d{0,1}\d|2[0-4]\d|25[0-5])\.){3}([01]{0,1}\d{0,1}\d|2[0-4]\d|25[0-5])"
 HTTP_CHECK_REGEX = r"^https?:/{2}\w.+$"
+DOMAIN_CHECK_REGEX = r'^(([a-zA-Z]{1})|([a-zA-Z]{1}[a-zA-Z]{1})|'\
+    r'([a-zA-Z]{1}[0-9]{1})|([0-9]{1}[a-zA-Z]{1})|'\
+    r'([a-zA-Z0-9][-_.a-zA-Z0-9]{0,61}[a-zA-Z0-9])).'\
+    r'([a-zA-Z]{2,13}|[a-zA-Z0-9-]{2,30}.[a-zA-Z]{2,3})$'
 
 UA = [
         "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_8; en-us) AppleWebKit/534.50 (KHTML, like Gecko) Version/5.1 Safari/534.50",

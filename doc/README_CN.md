@@ -30,7 +30,6 @@ Kunyu(坤舆)，旨在让企业资产收集更高效，使更多安全相关从�
 
 ```
 git clone https://github.com/knownsec/Kunyu.git
-tar -xvf Kunyu.tar
 cd Kunyu
 pip3 install -r requirements.txt
 
@@ -41,8 +40,11 @@ Linux:
 Windows:
 	cd kunyu
 	python3 console.py
+
+PYPI:
+	pip3 install kunyu
 	
-P.S. Windows同样支持python3 setup.py install，也可以使用pip install kunyu进行安装更新
+P.S. Windows同样支持python3 setup.py install.
 ```
 
 # 0x02 配置说明
@@ -73,6 +75,7 @@ Global commands:
         SearchCert <Domain>                       SSL certificate Search
         SearchDomain <Domain>                     Domain name associated/subdomain search
         EncodeHash <encryption> <query>     	  Encryption method interface 
+        HostCrash <IP> <Domain>                   Host Header Scan hidden assets
         Seebug <Query>                            Search Seebug vulnerability information
         set <Option>                              Set arguments values
         Pocsuite3                                 Invoke the pocsuite component
@@ -124,6 +127,18 @@ ZoomEye:
 
 ![](../images/searchcert.png)
 
+**特征搜索**
+
+通过HTTP请求包特征或网站相关特征可以进行更加精准的串并相同框架资产
+
+![](../images/headersearch.png)
+
+**多因素查询**
+
+同样kunyu也支持多因素条件查询关联资产，可以通过ZoomEye逻辑运算语法实现。
+
+![](../images/factor.png)
+
 **关联域名/子域名搜索**
 
 对关联域名以及子域名进行搜索，默认查询关联域名，可以通过设置 dtype 参数设置两种模式。
@@ -157,6 +172,12 @@ ZoomEye:
 在v1.3.1之后的版本中，您可以使用kunyu进行联动pocsuite3的console模式进行一体化的使用。
 
 ![](../images/pocsuite.png)
+
+**HOSTS头碰撞**
+
+通过HOSTS碰撞，可以有效的碰撞出内网中隐藏的资产，根据中间件httpf.conf中配置的ServerName域名和IP捆绑即可访问内网服务，后续通过设置本地hosts文件实现，因为本地hosts文件优先级高于DNS服务器解析。支持通过ZoomEye域名库反查或者读取TXT文件获取域名列表。
+
+![](../images/searchcrash.png)
 
 **数据结果**
 
