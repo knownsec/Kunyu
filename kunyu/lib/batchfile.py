@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # encoding: utf-8
 '''
 @author: 风起
@@ -17,7 +18,7 @@ from kunyu.utils.log import logger
 
 
 def getresult(func):
-    __ip_list = []
+
 
     @wraps(func)
     def getfile(file):
@@ -26,6 +27,7 @@ def getresult(func):
             Determine whether it is a txt file
             :param file: The path of the file to be read
         """
+        __ip_list = []
         try:
             # Check File Type
             if file.endswith(".txt"):
@@ -34,7 +36,6 @@ def getresult(func):
                 logger.warning("Only input TXT type files are allowed")
                 raise Exception
 
-            nonlocal __ip_list
             with open(file, "r", encoding='utf-8') as ip_text:
                 for line in ip_text:
                     __ip_list.append(line.strip())

@@ -50,7 +50,8 @@ class ZoomeyeSearch(object):
         self.page = 1
         self.method = method
         self.headers = {
-            "User-Agent": random.choice(UA)
+            "User-Agent": random.choice(UA),
+            "author": "ZoomEye Kunyu"
         }
 
     def __call__(self, func):
@@ -82,14 +83,14 @@ class ZoomeyeSearch(object):
                 login_url,
                 data=data,
                 headers=headers,
-                timeout=20
+                timeout=30
             )
         else:
             resp = requests.post(
                 login_url,
                 data=data,
                 headers=headers,
-                timeout=20
+                timeout=30
             )
         self.check_status(resp)
         self.check_error(resp.json())
@@ -326,6 +327,7 @@ class ZoomEye:
         # Use ZooEye batch query mode,Search: "ip:1.1.1.1 ip:2.2.2.2 ip:3.3.3.3"
         for ip in get_file(filename):
             search += "ip:{} ".format(ip)
+        # Determine the type of interface used
         if cls.btype == "host":
             return cls.command_searchhost(search)
 
