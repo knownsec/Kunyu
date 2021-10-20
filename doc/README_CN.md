@@ -54,6 +54,10 @@ kunyu init --apikey <your zoomeye key> --seebug <your seebug key>
 ```
 ![](../images/setinfo.png)
 
+需要通过ZoomEye登录凭证，才使用该工具进行信息收集。
+
+访问地址：https://www.zoomeye.org/
+
 # 0x03 工具使用
 
 ## 命令详解
@@ -178,6 +182,10 @@ ZoomEye:
 通过HOSTS碰撞，可以有效的碰撞出内网中隐藏的资产，根据中间件httpf.conf中配置的ServerName域名和IP捆绑即可访问内网服务，后续通过设置本地hosts文件实现，因为本地hosts文件优先级高于DNS服务器解析。支持通过ZoomEye域名库反查或者读取TXT文件获取域名列表。
 
 ![](../images/searchcrash.png)
+
+HOSTS交叉碰撞
+
+![](../images/searchcrashs.png)
 
 **数据结果**
 

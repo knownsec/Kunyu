@@ -18,6 +18,7 @@ import requests
 import configparser
 
 from kunyu.utils import *
+from kunyu.config import setting
 from kunyu.config.__version__ import usage, init, __title__, __help__
 
 parser = argparse.ArgumentParser(prog=__title__)
@@ -39,6 +40,7 @@ parser_init_console.add_argument("--apikey", help='ZoomEye API Key')
 parser_init_console.add_argument("--username", help='ZoomEye Username')
 parser_init_console.add_argument("--password", help='ZoomEye Password')
 parser_init_console.add_argument("--seebug", help='ZoomEye Password')
+parser_init_console.add_argument("--output", help='Set Output File Path')
 
 args = parser.parse_args()
 
@@ -52,6 +54,10 @@ __path = os.path.join(path, ".kunyu.ini")
 conf.read(__path)
 
 def initial_config():
+    """
+        Determine whether the parameters in the configuration file exist
+        If it does not exist, create a parameter and set the initial value to None
+    """
     if not conf.has_section("zoomeye") and not conf.has_section("login"):
         conf.add_section('zoomeye')
         conf.set("zoomeye", "apikey", "None")
@@ -61,6 +67,11 @@ def initial_config():
     if not conf.has_section("seebug"):
         conf.add_section('seebug')
         conf.set("seebug", "apikey", "None")
+
+    # The path of the output file
+    if not conf.has_section("path"):
+        conf.add_section("path")
+        conf.set("path", "output", setting.OUTPUT_PATH)
 
 def _get_login():
     param = '{{"username": "{}", "password": "{}"}}'.format(args.username, args.password)
@@ -88,6 +99,10 @@ try:
 
     if args.seebug:
         conf.set("seebug", "apikey", args.seebug)
+
+    # set output file path
+    if args.output:
+        conf.set("path", "output", args.output)
 
 except requests.HTTPError as err:
     print("\033[31;1m{}\033[0m".format(err))

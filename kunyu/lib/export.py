@@ -13,6 +13,7 @@ import datetime
 import csv
 import xlwt
 
+from kunyu.core import conf
 from kunyu.utils.log import logger
 from kunyu.config import setting
 
@@ -24,11 +25,12 @@ from kunyu.config import setting
     Security researchers can also modify code files as needed.
 """
 
+OUTPUT_PATH = conf.get("path", "output")
 
 def createdir():
     # Create the results output directory.
     __dirnamae = datetime.datetime.now().strftime("%Y%m%d%H%M")
-    path = os.path.expanduser(setting.OUTPUT_PATH)
+    path = os.path.expanduser(OUTPUT_PATH)
     __path = os.path.join(path, __dirnamae)
     setting.OUTPUT_PATH = __path
     if os.path.exists(__path):
