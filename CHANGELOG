@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.5] - 2021-10-20
+### Added 
+- Optimized the HOSTS collision function
+- Add HOSTS collision cross collision function
+- Increase the output file path customization function
+
 ## [v1.4] - 2021-9-4
 ### Added 
 - Modify the POC storage directory of the pocsuite module

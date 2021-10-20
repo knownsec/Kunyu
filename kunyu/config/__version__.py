@@ -15,7 +15,7 @@ __license__ = 'GPL-2.0'
 __python_version__ = sys.version.split()[0]
 __platform__ = platform.platform()
 __url__ = "https://github.com/knownsec/Kunyu"
-__version__ = '1.4.0'
+__version__ = '1.5.0'
 __author__ = '风起'
 __Team__ = 'KnownSec 404 Team'
 __author_email__ = 'onlyzaliks@gmail.com'
@@ -64,7 +64,8 @@ init = """
 Usage:
     kunyu -h
     kunyu init -h
-    kunyu init --apikey "01234567-acbd-00000-1111-22222222222"
+    kunyu init --output /root/kunyu/output
+    kunyu init --apikey "xxxxx911-6D2A-12345-4e23-64exxxxx6fb"
     kunyu init --username "404@knownsec.com" --password "P@ssword"
     kunyu init --seebug "012345200157abcdef981bcc89a1452c34d62b8c"
     kunyu init --apikey "01234567-acbd-0000" --seebug "a73503200157"(推荐)
