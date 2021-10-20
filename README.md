@@ -190,8 +190,6 @@ In versions after v1.3.1, you can use kunyu to link the console mode of pocsuite
 
 Through the HOSTS collision, the hidden assets in the intranet can be effectively collided, and the intranet service can be accessed according to the ServerName domain name and IP configured in the middleware httpf.conf. This can be achieved by setting the local hosts file later, because the local hosts file takes precedence. The level is higher than DNS server resolution. Support reverse check through ZoomEye domain name library or read TXT file to get the list of domain names.
 
-![](./images/searchcrash.png)
-
 HOSTS cross collision
 
 ![](./images/searchcrashs.png)
