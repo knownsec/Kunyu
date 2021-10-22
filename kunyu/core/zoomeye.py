@@ -83,14 +83,16 @@ class ZoomeyeSearch(object):
                 login_url,
                 data=data,
                 headers=headers,
-                timeout=30
+                timeout=30,
+                verify=False
             )
         else:
             resp = requests.post(
                 login_url,
                 data=data,
                 headers=headers,
-                timeout=30
+                timeout=30,
+                verify=False
             )
         self.check_status(resp)
         self.check_error(resp.json())
