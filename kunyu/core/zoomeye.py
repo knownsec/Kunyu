@@ -81,14 +81,14 @@ class ZoomeyeSearch(object):
             the processed data is received and returned to the original data,
             which is displayed on the terminal after processing by the presentation layer.
         """
-        timeout = int(GlobalVar.get_timeout_resp())
+        time = int(GlobalVar.get_timeout_resp())
         # The API is not available for tourist users
         if self.method == "GET":
             resp = requests.get(
                 login_url,
                 data=data,
                 headers=headers,
-                timeout=timeout,
+                timeout=time,
                 verify=False
             )
         else:
@@ -96,7 +96,7 @@ class ZoomeyeSearch(object):
                 login_url,
                 data=data,
                 headers=headers,
-                timeout=timeout,
+                timeout=time,
                 verify=False
             )
         self.check_status(resp)
