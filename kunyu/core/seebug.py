@@ -47,9 +47,13 @@ class Seebug:
             login_url = "%s?%s" % (SEARCH_API, urlencode(cls.param))
             resp = requests.get(
                 login_url,
-                headers=cls.headers
+                headers=cls.headers,
+                verify=False
             )
             return json.loads(resp.text)
+
+        except KeyboardInterrupt:
+            return
 
         except Exception:
             return logger.error("Failed to get SeeBug vulnerability information")

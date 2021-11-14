@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.6] - 2021-11-12
+### Added
+- Brand new style heading
+- Add Custom timeout options [timeout]
+- Add Raw data sensitive information matching [SearchKeyWord]
+- Added a command to view the output information banner information [view]
+- Optimized the abnormal launching program mechanism
+- Optimized the field information output by the info command
+- Support the execution of system commands
+- Optimized the host collision mechanism
+- Optimized the problem of incomplete information display on the mac system
+
+
 ## [v1.5] - 2021-10-20
 ### Added 
 - Optimized the HOSTS collision function

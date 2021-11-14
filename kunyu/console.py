@@ -21,12 +21,14 @@ from kunyu.core import conf
 
 def main():
     try:
+        # Check whether Kunyu has been initialized, If not, exit the program
         if str(conf.get("zoomeye", "apikey")) == "None" and str(conf.get("login", "token")) == "None":
             raise Exception
 
         # Call the main class
         KunyuInterpreter().main()
     except Exception:
+        # Output initialization help document
         logger_console.info(__help__.format(datil=init))
 
 

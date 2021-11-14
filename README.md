@@ -11,7 +11,7 @@ English | [中文文档](./doc/README_CN.md)
 
 Kunyu (kunyu), whose name is taken from <Knuyu Wanguo Quantu>, is actually a professional subject related to geographic information, which counts the geographic information of the sea, land, and sky. The same applies to cyberspace. The same is true for discovering unknown and fragile assets. It is more like a cyberspace map, which is used to comprehensively describe and display cyberspace assets, various elements of cyberspace and the relationship between elements, as well as cyberspace and real space. The mapping relationship. So I think "Kun Yu" still fits this concept.
 
-Kunyu aims to make corporate asset collection more efficient and enable more security-related practitioners to understand and use cyberspace surveying and mapping technology.
+Kunyu aims to make corporate asset collection more efficient and enable more security-related practitioners to understand and use cyberspace surveying and mapping technology. 
 
 ## Application scenario
 
@@ -49,7 +49,7 @@ P.S. Windows also supports python3 setup.py install.
 ```
 
 # 0x02 Configuration instructions
-When you run the program for the first time, you can initialize by entering the following command. Other login methods are provided. However, it is recommended to use the API method. Because the user name/password login requires an additional request, the API method is theoretically more efficient.
+When you run the program for the first time, you can initialize by entering the following command. Other login methods are provided. However, it is recommended to use the API method. Because the user name/password login requires an additional request, the API method is theoretically more efficient. 
 ```
 kunyu init --apikey <your zoomeye key> --seebug <your seebug key>
 ```
@@ -57,9 +57,11 @@ kunyu init --apikey <your zoomeye key> --seebug <your seebug key>
 
 You need to log in with ZoomEye credentials before using this tool for information collection.
 
-Visit address: https://www.zoomeye.org/
+ZoomEye access address: https://www.zoomeye.org/
 
-The output file path can be customized by the following command
+Seebug access address: https://www.seebug.org/
+
+The output file path can be customized by the following command,The default output path is: C:/Users/active user/kunyu/output/  or /active user/kunyu/output
 
 ```
 kunyu init --output C:\Users\风起\kunyu\output
@@ -89,14 +91,16 @@ Global commands:
         SearchDomain <Domain>                     Domain name associated/subdomain search
         EncodeHash <encryption> <query>           Encryption method interface 
         HostCrash <IP> <Domain>                   Host Header Scan hidden assets
-        Seebug <Query>                            Search Seebug vulnerability information
-        set <Option>                              Set arguments values
+        Seebug <query>                            Search Seebug vulnerability information
+        set <option>                              Set Global arguments values
+        view <ID>                                 Look over banner row data information
+        SearchKeyWord                             Query sensitive information by keyword
         Pocsuite3                                 Invoke the pocsuite component
-        ExportPath                                Returns the path of the output file 
+        ExportPath                                Returns the path of the output file
         clear                                     Clear the console screen
         show                                      Show can set options
         help                                      Print Help info
-        exit                                      Exit KunYu & 
+        exit                                      Exit KunYu &
 ```
 
 **OPTIONS**
@@ -106,11 +110,12 @@ ZoomEye:
 	page <Number>    				The number of pages returned by the query
 	dtype <0/1>      				Query associated domain name/subdomain name
 	btype <host/web> 				Set the API interface for batch query
+	timeout <num>					Set the timeout period of Kunyu HTTP request 
 ```
 
 ## Use case introduction
 
-*Here we use the ZoomEye module for demonstration*
+*Kunyu usage tutorial is as follows * 
 
 **User information query**
 
@@ -130,7 +135,13 @@ ZoomEye:
 
 **Icon Search**
 
-When collecting corporate assets, we can use this method to retrieve the same ico icon assets, which usually has a good effect when associating related corporate assets. But it should be noted that if some sites also use this ico icon, irrelevant assets may be associated (but people who are bored with other people's ico icons are always in the minority). Support url or local file search.
+When collecting corporate assets, we can use this method to retrieve the same ico icon assets, which usually has a good effect when associating related corporate assets. But it should be noted that if some sites also use this ico icon, irrelevant assets may be associated (but people who are bored with other people's ico icons are always in the minority). Support url or local file search. 
+
+**Command format:** 
+
+SearchIocn https://www.baidu.com/favicon.ico 
+
+SearchIcon /root/favicon.ico 
 
 ![](./images/searchico.png)
 
@@ -154,13 +165,50 @@ Through HTTP request packet features or website-related features, the same frame
 
 **Associated Domain/Subdomain Search**
 
-Search for associated domain names and subdomains, and query associated domain names by default. Two modes can be set by setting the dtype parameter.
+Search for associated domain names and subdomains, and query associated domain names by default. You can set **associated domain name/subdomain name** two modes by setting the dtype parameter. 
+
+Command format: **SearchDomain Domain** 
 
 ![](./images/searchdomain.png)
+
+**View Banner Information** 
+
+The user can view the banner corresponding to the specified serial number through the view command, so as to further analyze the front-end code and Header header, and the user can intercept the banner information for further association matching. 
+
+Command format: **view ID** 
+
+![](./images/view.png)
+
+**Collection of Sensitive Information** 
+
+After Kunyu v1.6.0, the acquisition of sensitive information in the banner has been added. Normally use the relevant grammar and set the number of pages. Kunyu will automatically collect the sensitive data in the banner information of the last query result, and then use the SearchKeyWord command to view the result . **Currently, testing will continue to focus on this feature point**. 
+
+![](./images/keyword.png)
+
+**System command execution** 
+
+After Kunyu v1.6.0, support for the execution of system commands has been added. You can debug surveying and mapping data more conveniently and effectively by executing some commonly used system commands. For a list of specific executable commands, see Article 11 in the Issue of the README file. 
+
+**Example One** 
+
+![](./images/systems.png)
+
+**Example two **
+
+![](./images/system.png)
 
 **Encoding hash calculation**
 
 In some scenarios, you can use this command to perform common HASH encryption/encoding, such as BASE64, MD5, mmh3, HEX encoding, and debug in this way.
+
+**Command format:** 
+
+EncodeHash hex 7239dcc9beb5c9cd795415f9
+EncodeHash md5 https://www.baidu.com/favicon.ico
+EncodeHash md5 /root/favicon.ico
+EncodeHash mmh3 https://www.baidu.com/favicon.ico
+EncodeHash mmh3 /root/favicon.ico
+EncodeHash base64 dasdasdsa
 
 ![](./images/encode.png)
 
@@ -168,13 +216,15 @@ In some scenarios, you can use this command to perform common HASH encryption/en
 
 You can query historical related vulnerabilities by entering information about the framework and equipment you want to find, but you need to note that only English is supported, and improvements and upgrades will be made later.
 
+Command format: **Seebug tongda** 
+
 ![](./images/seebug.png)
 
 **Setting parameters**
 
-When set page = 2, the returned results are 40. You can modify the page parameter to set the number of pages to be queried. Note that 1 page = 20/items. You can modify the value according to your needs to get more returned results.
+When set page = 2, the returned results are 40. You can modify the page parameter to set the number of pages to be queried. Note that 1 page = 20/items. You can modify the value according to your needs to get more returned results. 
 
-The configurable parameters and the current values of the parameters are displayed through show.
+The configurable parameters and the current values of the parameters are displayed through show. 
 
 ![](./images/show.png)
 
@@ -188,9 +238,23 @@ In versions after v1.3.1, you can use kunyu to link the console mode of pocsuite
 
 **HOSTS head collision**
 
-Through the HOSTS collision, the hidden assets in the intranet can be effectively collided, and the intranet service can be accessed according to the ServerName domain name and IP configured in the middleware httpf.conf. This can be achieved by setting the local hosts file later, because the local hosts file takes precedence. The level is higher than DNS server resolution. Support reverse check through ZoomEye domain name library or read TXT file to get the list of domain names.
+Through HOSTS collision, the hidden assets in the intranet can be effectively collided. According to the ServerName domain name and IP configured in the middleware httpf.conf, the access can be directly connected to the intranet business system! Follow-up by setting the local hosts file to achieve local DNS resolution, because the priority of the local hosts file is higher than the DNS server resolution. Support reverse check through ZoomEye domain name library or read TXT file to get the list of domain names. 
 
-HOSTS cross collision
+**Command format:** 
+
+HostCrash C:\ip.txt C:\host.txt 
+
+HostCrash C:\ip.txt baidu.com 
+
+HostCrash 1.1.1.1 baidu.com 
+
+HostCrash 1.1.1.1 G:\host.txt 
+
+**Example One** 
+
+![](./images/searchcrash.png)
+
+**Example Two** 
 
 ![](./images/searchcrashs.png)
 
@@ -207,9 +271,11 @@ All search results are saved in the user's root directory, and the directory is 
 
 ​    The tool framework has reference to Kunlun Mirror and Pocsuite3, which are all very good works.
 
+​	About the developer Fengqi(风起) Related articles: https://www.anquanke.com/member.html?memberId=148652 
+
 ​    Thanks to all the friends of KnownSec 404 Team.
 
-> “ 看得清 ” 是能力的体现，是 “ 器 ” ，而 “ 看得见 ” 就是思想的体现，那最后关联的是 “ 道 ”。
+> "Seeing clearly" is a manifestation of ability, a "tool", and "visible" is a manifestation of thought, and the final link is "Dao." 
 >
 > ​																																							 	   --SuperHei
 
@@ -255,11 +321,28 @@ Then save it and you can use it normally. The bug appears because there is a Chi
 
 **9. Pocsuite3 module POC storage directory**
 
-When using the pocsuite3 module, if you want to add a new POC module, you can add a POC file in **project directory/kunyu/pocs/**.
+When using the pocsuite3 module, if you want to add a new POC module, you can add a POC file in **project directory/pocsuite3/pocs/**. It should be noted that when using the packaged Kunyu console command, you should add the POC to this directory, and repackage the Kunyu program to load the POC normally. 
 
 **10. Pocsuite3 module POC missing issue**
 
-When using the Pocsuite command linkage, if it is a packaged Kunyu version, the poc has been fixed. At this time, modifying the poc directory cannot add new modules. At this time, you can repackage it or use the **project directory/kunyu /console.py** Run kunyu to update the poc module in real time.
+When using the Pocsuite command linkage, if it is a packaged Kunyu version, the poc has been fixed. At this time, modifying the poc directory cannot add new modules. At this time, you can repackage it or use the **project directory/kunyu /console.py** Run kunyu to update the poc module in real time. 
+
+**11. Kunyu can execute system commands as follows. ** 
+
+**Windows:**
+        OS_SYSTEM = [**"ipconfig", "dir", "whoami", "ping", "telnet", "cd", "findstr", "chdir","find", "mysql", "type", "curl", "netstat", "tasklist", "taskkill", "tracert", "del", "ver"**]
+
+**Linux/Mac：**
+
+​	OS_SYSTEM = [**"ifconfig", "ls", "cat", "pwd", "whoami", "ping", "find", "grep", "telnet", "mysql", "cd", "vi", "more", "less", "curl", "ps", "netstat", "rm", "touch", "mkdir", "uname"**]
+
+**12, Kunyu operating environment** 
+
+It is recommended to use Python3.2-3.9 version, other versions of Python3 may have unknown errors, **Python2 cannot be used**. 
+
+**13、Set the timeout period **
+
+**If the HTTP request is not responded in time, it can be solved by increasing the timeout time, such as: set timeout = 50 **
 
 # 0x06 Contributions
 
@@ -268,11 +351,19 @@ When using the Pocsuite command linkage, if it is a packaged Kunyu version, the 
 [fenix@knownsec 404](https://github.com/13ph03nix)  
 [0x7F@knownsec 404](https://github.com/0x7Fancy)
 
+# 0x07 Events
+
+ **404StarLink 2.0 - Galaxy**
+
+ **WHC 2021 (补天白帽大会) Best Weapon of the Year Award **
+
+ **KCON 2021 Arsenal**
+
 
 # 0x07 Community
 
 If you have any questions, you can submit an issue under the project, or contact us through the following methods.
 
-Scan the QR code to add the ZoomEye staff member WeChat, and remark Kunyu, which will draw everyone to the ZoomEye cyberspace surveying and mapping exchange group
+1、Scan the Wechat QR code to add ZoomEye operation Wechat, and comment on Kunyu, which will draw everyone to the ZoomEye Cyberspace Surveying and Mapping Exchange Group for communication. 
 
 ![](./images/yunying.jpg)

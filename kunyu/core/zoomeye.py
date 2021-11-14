@@ -13,6 +13,7 @@ import json
 import random
 
 import requests
+import platform
 from rich.table import Table
 from rich.console import Console
 
@@ -25,23 +26,24 @@ from pocsuite3 import set_paths
 from pocsuite3.lib.core.interpreter import PocsuiteInterpreter
 from pocsuite3.lib.core.option import init_options
 
-from kunyu.core import conf
 import kunyu.lib.encode as encode
-from kunyu.config.setting import UA, USER_INFO_API, HOST_SEARCH_API, WEB_SEARCH_API, DOMAIN_SEARCH_API, HOST_SCAN_INFO
+from kunyu.config.setting import UA, USER_INFO_API, HOST_SEARCH_API, WEB_SEARCH_API, DOMAIN_SEARCH_API, HOST_SCAN_INFO, SEMSITIVE_INFO
 from kunyu.lib.export import export_xls
 from kunyu.lib.batchfile import get_file
 from kunyu.core.crash import HostScan
+from kunyu.core.keyword import SearchKeyWord
+from kunyu.core import conf
 from kunyu.core.seebug import Seebug
 from kunyu.utils.log import logger, logger_console
 from kunyu.config.__version__ import __help__, init
 
 console = Console(color_system="auto", record=True)
+overflow = "fold" if platform.system() == "Darwin" else "ignore"
 
 ZOOMEYE_KEY = conf.get("zoomeye", "apikey")
 ZOOMEYE_TOKEN = conf.get("login", "token")
 
 params = {}
-
 
 class ZoomeyeSearch(object):
     def __init__(self, method):
@@ -51,7 +53,7 @@ class ZoomeyeSearch(object):
         self.method = method
         self.headers = {
             "User-Agent": random.choice(UA),
-            "author": "ZoomEye Kunyu"
+            "author": "ZoomEye KunYu"
         }
 
     def __call__(self, func):
@@ -67,6 +69,8 @@ class ZoomeyeSearch(object):
                 logger.warning(err)
             except requests.exceptions.ConnectionError:
                 logger.error("Network timeout")
+            except KeyboardInterrupt:
+                return
             return req_list
 
         return wrapper
@@ -77,20 +81,23 @@ class ZoomeyeSearch(object):
             the processed data is received and returned to the original data,
             which is displayed on the terminal after processing by the presentation layer.
         """
+        timeout = int(GlobalVar.get_timeout_resp())
         # The API is not available for tourist users
         if self.method == "GET":
             resp = requests.get(
                 login_url,
                 data=data,
                 headers=headers,
-                timeout=30
+                timeout=timeout,
+                verify=False
             )
         else:
             resp = requests.post(
                 login_url,
                 data=data,
                 headers=headers,
-                timeout=30
+                timeout=timeout,
+                verify=False
             )
         self.check_status(resp)
         self.check_error(resp.json())
@@ -148,15 +155,27 @@ def _dork_search(self, url, search, page):
 def _user_info(self):
     return USER_INFO_API
 
+# Set Global variate
+class GlobalVar:
+    timeout_resp = 30
+    def set_timeout_resp(timeout_resp):
+        GlobalVar.timeout_resp = timeout_resp
+
+    def get_timeout_resp(*args):
+        return GlobalVar.timeout_resp
 
 # The Display class of the tool
 class ZoomEye:
     from kunyu.config.setting import ZOOMEYE_FIELDS_HOST, ZOOMEYE_FIELDS_WEB, ZOOMEYE_FIELDS_INFO, ZOOMEYE_FIELDS_DOMAIN
     from kunyu.utils.convert import convert
+    raw_data_params = {}
+    sensitive_params = []
     page = 1
     dtype = 0
     btype = "host"
+    timeout = 30
 
+    # Global commands List
     help = """Global commands:
         info                                      Print User info
         SearchHost <query>                        Basic Host search
@@ -168,9 +187,11 @@ class ZoomEye:
         EncodeHash <encryption> <query>           Encryption method interface (base64/hex/md5/mmh3)
         HostCrash <IP> <Domain>                   Host Header Scan hidden assets
         Seebug <query>                            Search Seebug vulnerability information
-        set <option>                              Set arguments values
+        set <option>                              Set Global arguments values
+        view <ID>                                 Look over banner row data information
+        SearchKeyWord                             Query sensitive information by keyword
         Pocsuite3                                 Invoke the pocsuite component
-        ExportPath                                Returns the path of the output file 
+        ExportPath                                Returns the path of the output file
         clear                                     Clear the console screen
         show                                      Show can set options
         help                                      Print Help info
@@ -178,7 +199,8 @@ class ZoomEye:
 
     # ZoomEye Command List
     Command_Info = ["help", "info", "set", "Seebug", "SearchWeb", "SearchHost", "SearchIcon", "HostCrash", "SearchBatch",
-                    "SearchCert", "SearchDomain", "EncodeHash", "Pocsuite3", "ExportPath", "show", "clear", "exit"]
+                    "SearchCert", "SearchDomain", "EncodeHash", "Pocsuite3", "ExportPath", "show", "clear", "view", "SearchKeyWord",
+                    "exit"]
 
     def __init__(self):
         self.fields_tables = None
@@ -189,10 +211,13 @@ class ZoomEye:
             :param search: zoomeye grammar search statement
             :param types: Dynamically set according to the interface used
         """
+        self.raw_data_params.clear()
+        self.sensitive_params.clear()
+        GlobalVar.set_timeout_resp(self.timeout)
         table = Table(show_header=True, style="bold")
         global total, api_url, result, FIELDS, export_host
-        total, num = 0, 0
         result_type = "matches"
+        total, num = 0, 0
         export_list = []
 
         # Gets the API for the call
@@ -206,7 +231,9 @@ class ZoomEye:
 
         try:
             for cloumn in FIELDS:
-                table.add_column(cloumn, justify="center", overflow="ignore")
+                table.add_column(
+                    cloumn, justify="center", overflow=overflow
+                )
         except Exception:
             return logger.warning("Please enter the correct field")
 
@@ -237,6 +264,13 @@ class ZoomEye:
                                        str(data.portinfo.app), str(data.geoinfo.isp), str(data.geoinfo.country.names.en),
                                        str(data.geoinfo.city.names.en), str(title), str(data.timestamp).split("T")[0]]
 
+                        # Reset the <raw Data Params> element
+                        self.raw_data_params[num] = data.portinfo.banner
+
+                        # Get the sensitive information in the banner
+                        sensitive = SearchKeyWord().get_keyword_sensitive(data.portinfo.banner)
+                        if sensitive: self.sensitive_params.append(sensitive)
+
                     elif api_url == WEB_SEARCH_API:
                         # Because of the problem of returning the default value of the field
                         if data.webapp:
@@ -264,10 +298,18 @@ class ZoomEye:
                                        str(system_os), str(webapp_name), str(db_name),
                                        str(language), str(server_name), str(data.timestamp).split("T")[0]]
 
+                        # Reset the <raw Data Params> element
+                        self.raw_data_params[num] = data.raw_data
+
+                        # Get the sensitive information in the banner
+                        sensitive = SearchKeyWord().get_keyword_sensitive(data.raw_data)
+                        if sensitive: self.sensitive_params.append(sensitive)
+
                     elif types == "domain":
                         # Set the output field
-                        table.add_row(str(num), str(data.name), str(data.ip), str(data.timestamp))
-
+                        table.add_row(
+                            str(num), str(data.name), str(data.ip), str(data.timestamp)
+                        )
                         # Set the exported fields
                         export_host = [str(num), str(data.name), str(data.ip), str(data.timestamp)]
                     export_list.append(export_host)
@@ -284,6 +326,7 @@ class ZoomEye:
             logger.info("Search information retrieval is completed\n")
         else:
             logger.error("The query result is empty\n")
+        # console.print(self.raw_data_params)
         return console
 
     @classmethod
@@ -291,12 +334,16 @@ class ZoomEye:
         """ return user info"""
         table = Table(show_header=True, style="bold")
         info = cls.convert(_user_info()[0])
+        # Calculate the total quota for the month
+        search_quota = int(info.quota_info.remain_free_quota) + int(info.quota_info.remain_pay_quota)
         for column in cls.ZOOMEYE_FIELDS_INFO:
-            table.add_column(column, justify="center", overflow="ignore")
-
+            table.add_column(
+                column, justify="center", overflow=overflow
+            )
+        info.user_info.expired_at = None if info.user_info.expired_at == "" else info.user_info.expired_at
         console.log("User Information:", style="green")
-        table.add_row(str(info.plan), str(info.resources.search), str(info.resources.stats),
-                      str(info.resources.interval))
+        table.add_row(str(info.user_info.name),str(info.user_info.role),
+                      str(search_quota),str(info.user_info.expired_at))
         console.print(table)
         logger.info("User information retrieval is completed\n")
 
@@ -340,8 +387,11 @@ class ZoomEye:
             Associate assets by calculating the SSL serial number of the domain name
             :param hostname: Enter the domain name using the HTTPS protocol
         """
-        if encode.cert_encode(hostname) is not None:
-            return cls.__command_search(cls, "ssl:" + str(encode.cert_encode(hostname)))
+        try:
+            if encode.cert_encode(hostname) is not None:
+                return cls.__command_search(cls, "ssl:" + str(encode.cert_encode(hostname)))
+        except KeyboardInterrupt:
+            return
 
     @classmethod
     # ZoomEye Icon Image Search
@@ -409,8 +459,60 @@ class ZoomEye:
         set_paths(module_path())
         init_options()
         # Set the directory to store the poc
-        poc = PocsuiteInterpreter(os.path.abspath(os.path.dirname(os.path.dirname(__file__)))+"/pocs")
+        poc = PocsuiteInterpreter(os.path.abspath(os.path.dirname(os.path.dirname(__file__))) + "/pocs")
         poc.start()
+
+    @classmethod
+    # look over row_data info
+    def command_view(cls, serial):
+        """
+            View raw data information
+            You can view any raw data by entering the serial number
+            :param serial): Please enter serial number ID
+        """
+        try:
+            # If the key parameter is not specified, the key parameter is automatically set to 1
+            serials = 1 if serial is "" else serial
+            raw_data = cls.raw_data_params.get(int(serials))
+            # Check whether the returned result is None
+            if raw_data is None:
+                raise ArithmeticError
+            # Check whether the returned result is ""
+            elif raw_data is "":
+                logger.warning("Banner information is empty")
+            else:
+                console.log("Banner Information is:\n", style="green")
+                console.print(raw_data)
+
+        except ArithmeticError:
+            logger.warning("No retrieval operation is performed or the length of the dictionary key value is exceeded")
+            return
+
+    @classmethod
+    def command_searchkeyword(cls, *args, **kwargs):
+        try:
+            keyword_param = set()
+            num = 0
+            # sensitive_params information
+            for sensitive in cls.sensitive_params:
+                for item in sensitive:
+                    keyword_param.add(item)
+            # Set table console print
+            table = Table(show_header=True, style="bold")
+            for column in SEMSITIVE_INFO:
+                table.add_column(
+                    column, justify="center", overflow=overflow
+                )
+            # add table information
+            for keyword in keyword_param:
+                num += 1
+                table.add_row(
+                    str(num), str(keyword)
+                )
+            # print sensitive info
+            console.print(table)
+        except Exception:
+            return
 
     @classmethod
     def command_hostcrash(cls, args):
@@ -432,15 +534,20 @@ class ZoomEye:
             table = Table(show_header=True, style="bold")
             # Read the list header
             for column in HOST_SCAN_INFO:
-                table.add_column(column, justify="center", overflow="ignore")
+                table.add_column(column, justify="center", overflow=overflow)
             # Set output list content
             for res in result_list:
-                table.add_row(str(res[0]), str(res[1]), str(res[2]))
+                table.add_row(
+                    str(res[0]), str(res[1]), str(res[2])
+                )
             # Output table list to console
             console.print(table)
             logger.info("Host Header Scan is completed\n")
+            # Export HOSTS collision results
+            export_xls(result_list, HOST_SCAN_INFO)
             # End of function execution
         except ArithmeticError:
             logger.warning("Please Host IP and Domain\n")
 
-
+        except KeyboardInterrupt:
+            return
