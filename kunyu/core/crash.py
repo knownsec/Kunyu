@@ -61,6 +61,7 @@ class HostScan:
                     DOMAIN_SEARCH_API,
                     data=self.params,
                     headers=self.headers,
+                    verify=False
                 )
                 self.__check_error(json.loads(resp.text))
                 return resp.json()
@@ -76,7 +77,6 @@ class HostScan:
                 for num in range(len(result["list"])):
                     data = convert(result["list"][num])
                     domain_list.append(data.name)
-
             # Remove duplicate domain names
             domain_list = list(set(domain_list))
             console.log("Host Header Scan Domain Total: ", len(domain_list), style="green")
@@ -116,7 +116,7 @@ class HostScan:
             domain_list = self.__get_zoomeye_domain()
         else:
             for domain in get_domain_file(search):
-                domain_list.append(domain)
+                domain_list.append(str(domain))
             # Return to the domain name combing in the file
             console.log("Host Header Scan Domain Total: ", len(domain_list), style="green")
         return domain_list
@@ -144,6 +144,7 @@ class HostScan:
         """
         resp = []
         crash_list = []
+        # http and https protocol collision
         protocol = ['http://{}/', 'https://{}/']
         self.params["q"] = search
         domain_list = self._get_file(search)
@@ -153,11 +154,14 @@ class HostScan:
                 urls = server.format(ip_address)
                 for domain in domain_list:
                     headers = {'Host': domain.strip(),
-                               'User-Agent': random.choice(UA),
-                               'ip': urls
-                               }
+                                'User-Agent': random.choice(UA),
+                                'ip': urls,
+                                }
                     # Concurrent requests through the encapsulated coroutine module
-                    resp.append(grequests.get(urls, headers=headers, timeout=2))
+                    resp.append(grequests.get(
+                        urls, headers=headers, timeout=2, verify=False)
+                    )
+
         res_list = grequests.map(resp)
         for res in res_list:
             try:
@@ -166,8 +170,9 @@ class HostScan:
                     res.encoding = 'gbk2312'
                     # Get the title of the returned result
                     title = re.findall('<title>(.+)</title>', res.text)
-                    crash_list.append([res.request.headers['ip'], res.request.headers['Host'], title[0]])
-
+                    crash_list.append(
+                        [res.request.headers['ip'], res.request.headers['Host'], title[0]]
+                    )
             except Exception:
                 continue
 

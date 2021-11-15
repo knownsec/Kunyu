@@ -68,9 +68,10 @@ def get_domain_file(*args, **kwargs):
             _ip_list.append(i)
         return _ip_list
 
+    except KeyboardInterrupt:
+        return
     except Exception:
         logger.error("Failed to get IP list content! Please check if the IP file name is abnormal")
-        sys.exit(0)
 
 
 # Get the contents of the IP list.
@@ -81,6 +82,7 @@ def get_file(*args, **kwargs):
             _ip_list.append(i)
         return _ip_list
 
+    except KeyboardInterrupt:
+        return
     except Exception:
         logger.error("Failed to get IP list content! Please check if the IP file name is abnormal")
-        sys.exit(0)

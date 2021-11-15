@@ -31,7 +31,7 @@ parser_group_console = subparsers.add_parser('console', help='Enter Console Mode
                                              usage=argparse.SUPPRESS, add_help=True)
 
 # Initial Configuration
-parser_init_console = subparsers.add_parser('init', help='Enter console mode',
+parser_init_console = subparsers.add_parser('init', help='Enter init information',
                                             description=__help__.format(datil=init),
                                             formatter_class=argparse.RawDescriptionHelpFormatter,
                                             usage=argparse.SUPPRESS, add_help=True)
@@ -73,12 +73,13 @@ def initial_config():
         conf.add_section("path")
         conf.set("path", "output", setting.OUTPUT_PATH)
 
+# Verify the login status of the ZoomEye account
 def _get_login():
     param = '{{"username": "{}", "password": "{}"}}'.format(args.username, args.password)
     resp = requests.post(
         "https://api.zoomeye.org/user/login",
         data=param,
-        timeout=5
+        timeout=15
     )
     resp = json.loads(resp.text)
     try:
@@ -90,6 +91,7 @@ def _get_login():
 
 
 try:
+    # Initialize the configuration file
     initial_config()
     if args.apikey:
         conf.set("zoomeye", "apikey", args.apikey)

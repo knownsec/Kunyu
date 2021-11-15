@@ -1,6 +1,8 @@
 <h1 align="center">Kunyu(坤舆) - 更高效的企业资产收集</h1>
 
-[![GitHub stars](https://img.shields.io/github/stars/knownsec/Kunyu)](https://github.com/knownsec/Kunyu) [![GitHub issues](https://img.shields.io/github/issues/knownsec/Kunyu)](https://github.com/knownsec/Kunyu/issues) [![GitHub release](https://img.shields.io/github/release/knownsec/Kunyu)](https://github.com/knownsec/Kunyu/releases)![](https://img.shields.io/badge/python-%3E%3D3.2-yellow) [![](https://img.shields.io/badge/author-风起-blueviolet)](https://github.com/wikiZ) [![](https://img.shields.io/badge/KnownSec-404Team-blue)](https://github.com/wikiZ)
+[![GitHub stars](https://img.shields.io/github/stars/knownsec/Kunyu)](https://github.com/knownsec/Kunyu) [![GitHub release](https://img.shields.io/github/forks/knownsec/Kunyu) ![GitHub release](https://img.shields.io/github/release/knownsec/Kunyu)](https://github.com/knownsec/Kunyu/releases)![](https://img.shields.io/badge/python-%3E%3D3.2-yellow) [![](https://img.shields.io/badge/author-风起-blueviolet)](https://github.com/wikiZ) [![](https://img.shields.io/badge/KnownSec-404Team-blue)](https://github.com/wikiZ)
+
+
 
 中文文档 | [English](../README.md)
 
@@ -44,7 +46,7 @@ Windows:
 PYPI:
 	pip3 install kunyu
 	
-P.S. Windows同样支持python3 setup.py install.
+P.S. Windows同样支持python3 setup.py install
 ```
 
 # 0x02 配置说明
@@ -54,9 +56,19 @@ kunyu init --apikey <your zoomeye key> --seebug <your seebug key>
 ```
 ![](../images/setinfo.png)
 
-需要通过ZoomEye登录凭证，才使用该工具进行信息收集。
+初次使用需要通过ZoomEye登录凭证，才使用该工具进行信息收集。
 
-访问地址：https://www.zoomeye.org/
+**ZoomEye访问地址：https://www.zoomeye.org/**
+
+**Seebug访问地址：https://www.seebug.org/**
+
+可以通过以下命令自定义输出文件路径 ，默认输出路径为:C:\Users\active user\kunyu\output\
+
+```bash
+kunyu init --output C:\Users\风起\kunyu\output
+```
+
+![](../images/setoutput.png)
 
 # 0x03 工具使用
 
@@ -67,7 +79,7 @@ kunyu console
 ```
 ![](../images/infos.png)
 
-**ZoomEye**
+**Kunyu Command**
 
 ```
 Global commands:
@@ -78,16 +90,18 @@ Global commands:
         SearchBatch <File>                        Batch search Host
         SearchCert <Domain>                       SSL certificate Search
         SearchDomain <Domain>                     Domain name associated/subdomain search
-        EncodeHash <encryption> <query>     	  Encryption method interface 
+        EncodeHash <encryption> <query>           Encryption method interface 
         HostCrash <IP> <Domain>                   Host Header Scan hidden assets
-        Seebug <Query>                            Search Seebug vulnerability information
-        set <Option>                              Set arguments values
+        Seebug <query>                            Search Seebug vulnerability information
+        set <option>                              Set Global arguments values
+        view <ID>                                 Look over banner row data information
+        SearchKeyWord                             Query sensitive information by keyword
         Pocsuite3                                 Invoke the pocsuite component
-        ExportPath                                Returns the path of the output file 
+        ExportPath                                Returns the path of the output file
         clear                                     Clear the console screen
         show                                      Show can set options
         help                                      Print Help info
-        exit                                      Exit KunYu & 
+        exit                                      Exit KunYu &
 ```
 
 **OPTIONS**
@@ -97,11 +111,12 @@ ZoomEye:
 	page <Number>    查询返回页数(默认查询一页，每页20条数据)
 	dtype <0/1>      查询关联域名/子域名(设置0为查询关联域名，反之为子域名)
 	btype <host/web> 设置批量查询的API接口(默认为HOST)
+	timeout <num>	 设置Kunyu HTTP请求的超时时间
 ```
 
 ## 使用案例
 
-*这里我们使用 ZoomEye 模块进行演示*
+*Kunyu（坤舆）的使用教程如下所示*
 
 **用户信息**
 
@@ -122,6 +137,12 @@ ZoomEye:
 **Icon 搜索**
 
 在搜集企业资产时，我们可以使用这样的方式进行检索相同 ico 图标资产，在关联相关企业资产时，通常会有不错的效果。但是需要注意的是如果某些站点也使用这个 ico 图标，可能会关联出无关资产(但是无聊用别人 ico 图标的人总归是少数吧)。支持url或本地文件的方式搜索。
+
+**命令格式：**
+
+SearchIocn https://www.baidu.com/favicon.ico
+
+SearchIcon /root/favicon.ico
 
 ![](../images/searchico.png)
 
@@ -145,19 +166,58 @@ ZoomEye:
 
 **关联域名/子域名搜索**
 
-对关联域名以及子域名进行搜索，默认查询关联域名，可以通过设置 dtype 参数设置两种模式。
+对关联域名以及子域名进行搜索，默认查询关联域名，可以通过设置 dtype 参数设置 **关联域名/子域名** 两种模式。
+
+命令格式：**SearchDomain Domain**
 
 ![](../images/searchdomain.png)
+
+**查看Banner信息**
+
+用户可以通过view命令查看指定序号对应信息的Banner，从而进一步分析前端代码及Header头，用户可以截取banner信息进一步的关联匹配。
+
+命令格式: **view ID**
+
+![](../images/view.png)
+
+**敏感信息收集**
+
+在Kunyu v1.6.0版本后，增加了对banner中敏感信息的获取，平时使用正常使用相关语法，设置页数，Kunyu会自动收集上一次查询结果banner信息中的敏感数据，然后通过SearchKeyWord命令查看结果。**目前将持续测试关注该功能点**。
+
+![](../images/keyword.png)
+
+**系统命令执行**
+
+在Kunyu v1.6.0后增加了对系统命令执行的支持，可以通过执行常用的一些系统命令进行更方便有效的调试测绘数据，具体可执行命令列表可见README文件Issue中第11条。
+
+**示例一**
+
+![](../images/systems.png)
+
+**示例二**
+
+![](../images/system.png)
 
 **编码哈希计算**
 
 在一些场景下，可以通过该命令进行常用的HASH加密/编码，如：BASE64、MD5、mmh3、HEX编码，通过这种方式进行调试。
+
+**命令格式：**
+
+EncodeHash hex 7239dcc9beb5c9cd795415f9
+EncodeHash md5 https://www.baidu.com/favicon.ico
+EncodeHash md5 /root/favicon.ico
+EncodeHash mmh3 https://www.baidu.com/favicon.ico
+EncodeHash mmh3 /root/favicon.ico
+EncodeHash base64 dasdasdsa
 
 ![](../images/encode.png)
 
 **Seebug漏洞查询**
 
 通过输入想要查找的框架、设备等信息，查询历史相关漏洞，但是需要注意仅支持英文，这里后期会进行改进，升级。
+
+命令格式: **Seebug tongda**
 
 ![](../images/seebug.png)
 
@@ -179,9 +239,20 @@ ZoomEye:
 
 **HOSTS头碰撞**
 
-通过HOSTS碰撞，可以有效的碰撞出内网中隐藏的资产，根据中间件httpf.conf中配置的ServerName域名和IP捆绑即可访问内网服务，后续通过设置本地hosts文件实现，因为本地hosts文件优先级高于DNS服务器解析。支持通过ZoomEye域名库反查或者读取TXT文件获取域名列表。
+通过HOSTS碰撞，可以有效的碰撞出内网中隐藏的资产，根据中间件httpf.conf中配置的ServerName域名和IP捆绑访问即可直通内网业务系统！后续通过设置本地hosts文件实现本地DNS解析，因为本地hosts文件优先级高于DNS服务器解析。支持通过ZoomEye域名库反查或者读取TXT文件获取域名列表。
 
-HOSTS交叉碰撞
+**命令格式：**
+
+HostCrash C:\ip.txt C:\host.txt
+HostCrash C:\ip.txt baidu.com
+HostCrash 1.1.1.1 baidu.com
+HostCrash 1.1.1.1 G:\host.txt
+
+**示例一**
+
+![](../images/searchcrash.png)
+
+**示例二**
 
 ![](../images/searchcrashs.png)
 
@@ -194,11 +265,11 @@ HOSTS交叉碰撞
 
 # 0x04 Loading
 
-​    其实还有很多的思路，但是作为 Alpha 版本先这样，后期会不断进行完善的，希望 Kunyu (坤舆)能够让更多安全从业者所知，谢谢各位的支持。
+​    感谢各位用户的支持，Kunyu也会坚持进行完善更新的，希望 Kunyu (坤舆)能够让更多安全从业者所知，工具框架有参考昆仑镜、Pocsuite3，都是非常棒的作品。	
 
-​    工具框架有参考昆仑镜、Pocsuite3，都是非常棒的作品。	
+​    感谢 KnownSec 404 Team 的全体小伙伴。	
 
-​    感谢 KnownSec 404 Team 的全体小伙伴。
+​	**关于开发者 风起 相关文章：https://www.anquanke.com/member.html?memberId=148652**																																																	
 
 > “ 看得清 ” 是能力的体现，是 “ 器 ” ，而 “ 看得见 ” 就是思想的体现，那最后关联的是 “ 道 ”。
 >
@@ -245,25 +316,50 @@ Kunyu的自动补全支持大小写，命令记录等，使用Tab进行补全，
 
 **9、Pocsuite3模块POC存放目录**
 
-对于使用pocsuite3模块时，如果想要新增POC模块，则可以在 **项目目录/pocsuite3/pocs/** 添加POC文件。
+对于使用pocsuite3模块时，如果想要新增POC模块，则可以在 **项目目录/pocsuite3/pocs/** 添加POC文件。需要注意的是，当使用打包好的Kunyu console命令时应添加POC到该目录，并重新打包kunyu程序才可以正常加载POC。
 
 **10、Pocsuite3模块POC缺失问题**
 
 使用Pocsuite命令联动时，如果是已经打包好的Kunyu版本，则poc已经被固定，这时修改poc目录是无法新增模块的，这时可以通过重新打包的方式，或者使用 **项目目录/kunyu/console.py** 运行kunyu可实时更新poc模块。
 
+**11、Kunyu可执行系统命令如下。**
+
+**Windows:**
+        OS_SYSTEM = [**"ipconfig", "dir", "whoami", "ping", "telnet", "cd", "findstr", "chdir","find", "mysql", "type", "curl", "netstat", "tasklist", "taskkill", "tracert", "del", "ver"**]
+
+**Linux/Mac：**
+
+​	OS_SYSTEM = [**"ifconfig", "ls", "cat", "pwd", "whoami", "ping", "find", "grep", "telnet", "mysql", "cd", "vi", "more", "less", "curl", "ps", "netstat", "rm", "touch", "mkdir", "uname"**]
+
+**12、Kunyu运行环境**
+
+这里建议使用Python3.2 — 3.9版本，Python3其他版本可能会有未知的报错，**Python2不可使用**。
+
+13、设置超时时间
+
+如果HTTP请求没有得到及时响应，可以通过增大timeout时间解决，如:set timeout = 50
+
 # 0x06 Contributions
 
-[风起@knownsec 404](https://github.com/wikiZ)
+[风起@knownsec 404](https://github.com/wikiZ) 
 
-[wh0am1i@knownsec 404](https://github.com/wh0am1i)  
+ [wh0am1i@knownsec 404](https://github.com/wh0am1i)  
 [fenix@knownsec 404](https://github.com/13ph03nix)  
 [0x7F@knownsec 404](https://github.com/0x7Fancy)
 
+# 0x07 Events
 
-# 0x07 Community
+ **404StarLink 2.0 - Galaxy**
+
+ **WHC 2021 (补天白帽大会) 年度最佳兵器奖**
+
+ **KCON 2021 Arsenal**
+
+
+# 0x08 Community
 
 如果有问题可以在项目下提交issue，或通过以下方式联系我们。
 
-1、扫描一下二维码添加ZoomEye运营微信，并备注坤舆，会把大家拉到ZoomEye网空测绘交流群中
+1、扫描一下微信二维码添加ZoomEye运营微信，并备注坤舆，会把大家拉到ZoomEye网空测绘交流群中交流。
 
 ![](../images/yunying.jpg)

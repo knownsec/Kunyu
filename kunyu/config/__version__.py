@@ -15,25 +15,21 @@ __license__ = 'GPL-2.0'
 __python_version__ = sys.version.split()[0]
 __platform__ = platform.platform()
 __url__ = "https://github.com/knownsec/Kunyu"
-__version__ = '1.5.0'
+__version__ = '1.6.0'
 __author__ = '风起'
 __Team__ = 'KnownSec 404 Team'
 __author_email__ = 'onlyzaliks@gmail.com'
 __copyright__ = 'Copyright (C) 2021 风起. All Rights Reserved'
 __introduction__ = """
-          ___           ___           ___           ___           ___     
-         /\__\         /\__\         /\__\         |\__\         /\__\    
-        /:/  /        /:/  /        /::|  |        |:|  |       /:/  /    
-       /:/__/        /:/  /        /:|:|  |        |:|  |      /:/  /     
-      /::\__\____   /:/  /  ___   /:/|:|  |__      |:|__|__   /:/  /  ___ 
-     /:/\:::::\__\ /:/__/  /\__\ /:/ |:| /\__\     /::::\__\ /:/__/  /\__\\
-     \/_|:|~~|~    \:\  \ /:/  / \/__|:|/:/  /    /:/~~/~    \:\  \ /:/  /
-        |:|  |      \:\  /:/  /      |:/:/  /    /:/  /       \:\  /:/  / 
-        |:|  |       \:\/:/  /       |::/  /     \/__/         \:\/:/  /  
-        |:|  |        \::/  /        /:/  /                     \::/  /    -V {version} Beta
-         \|__|         \/__/         \/__/                       \/__/    
 
-
+██╗  ██╗  ██╗   ██╗  ███╗   ██╗  ██╗   ██╗  ██╗   ██╗
+██║ ██╔╝  ██║   ██║  ████╗  ██║  ╚██╗ ██╔╝  ██║   ██║
+█████╔╝   ██║   ██║  ██╔██╗ ██║   ╚████╔╝   ██║   ██║
+██╔═██╗   ██║   ██║  ██║╚██╗██║    ╚██╔╝    ██║   ██║   
+██║  ██╗  ╚██████╔╝  ██║ ╚████║     ██║     ╚██████╔╝   -V {version} Beta  
+╚═╝  ╚═╝   ╚═════╝   ╚═╝  ╚═══╝     ╚═╝      ╚═════╝    
+                                                
+                                                                         
 GitHub:{url}
 
 kunyu is Cyberspace Search Engine auxiliary tools
@@ -68,5 +64,5 @@ Usage:
     kunyu init --apikey "xxxxx911-6D2A-12345-4e23-64exxxxx6fb"
     kunyu init --username "404@knownsec.com" --password "P@ssword"
     kunyu init --seebug "012345200157abcdef981bcc89a1452c34d62b8c"
-    kunyu init --apikey "01234567-acbd-0000" --seebug "a73503200157"(推荐)
+    kunyu init --apikey "01234567-acbd-0000" --seebug "a73503200157" (recommend)
 """

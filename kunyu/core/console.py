@@ -13,6 +13,9 @@ import platform
 import subprocess
 
 from colorama import init
+from rich.table import Table
+from rich.console import Console
+
 from kunyu.config import setting
 from rich.console import Console
 from kunyu.utils.log import logger
@@ -20,14 +23,14 @@ from kunyu.lib.export import createdir
 from kunyu.core.zoomeye import ZoomEye
 from kunyu.utils import readineng as readline
 from kunyu.config.__version__ import __introduction__
+from kunyu.config.setting import COMMAND_INFO, OS_SYSTEM
 
 init(autoreset=True)
 PLATFORM = platform.system()
 
 # Determine the operating system clear screen command
 cmd = "cls" if PLATFORM == "Windows" else "clear"
-console = Console(color_system="auto")
-
+console = Console(color_system="auto", record=True)
 
 def readline_available():
     """
@@ -87,7 +90,8 @@ class BaseInterpreter(object):
     @property
     def prompt(self):
         """ Returns prompt string """
-        return "Kunyu (\033[31;1m{}\033[0m) > ".format(self.module)
+        os.system("")
+        return "Kunyu (\033[31;1m{moudle}\033[0m) > ".format(moudle=self.module)
 
     def get_command_handler(self, command):
         """ Parsing command and returning appropriate handler.
@@ -137,22 +141,39 @@ class BaseInterpreter(object):
             return True
         elif command == "exit":
             raise KeyboardInterrupt
+
         elif command == "help":
             console.print(eval(self.module).help)
             return True
         elif command == "set":
             return self.setter(line)
+
+        # show Global Command Info
         elif command == "show":
-            set_info = """Global options:
-                page  <{}>                       Set Search Page
-                dtype <{}>                       Set associated/subdomain search schema
-                btype <{}>                    Set BatchFile schema
-            """.format(self.getter("page"), self.getter("dtype"), self.getter("btype"))
-            console.print(set_info)
+            table = Table(show_header=True, style="bold")
+            for cloumn in COMMAND_INFO:
+                table.add_column(
+                    cloumn, justify="center", overflow="fold"
+                )
+            command_info = [["page", self.getter("page"),"Set Search Page"],
+                            ["dtype", self.getter("dtype"), "Set Associated/Subdomain Search Schema"],
+                            ["timeout", self.getter("timeout"), "Set HTTP Requests Timeout"],
+                            ["btype", self.getter("btype"), "Set BatchFile Search Schema"]]
+            for info in command_info:
+                table.add_row(
+                    str(info[0]), str(info[1]), str(info[2])
+                )
+            console.log("Global Command Info:", style="green")
+            console.print(table)
             return True
         elif command == "exportpath":
             # Return Export Path
             logger.info(setting.OUTPUT_PATH)
+            return True
+
+        elif command in OS_SYSTEM:
+            command_os = "{} {}".format(command, line)
+            os.system(command_os)
             return True
 
         return False
@@ -173,14 +194,15 @@ class BaseInterpreter(object):
                 logger.info("kunyu Console mode stopped")
                 break
             except KeyboardInterrupt:
-                logger.info("Console Exit")
+                logger.info("kunyu Console mode stopped")
                 try:
                     os.rmdir(setting.OUTPUT_PATH)
                 except OSError:
                     pass
                 sys.exit(0)
+
             except Exception as err:
-                print(err)
+                console.print(err)
                 continue
 
 

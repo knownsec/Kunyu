@@ -9,7 +9,9 @@ This code file is used to set global parameters
 '''
 
 import os
-import re
+import platform
+
+PLATFORM = platform.system()
 
 # ZoomEye API
 USER_INFO_API = "https://api.zoomeye.org/resources-info"
@@ -21,9 +23,18 @@ DOMAIN_SEARCH_API = "https://api.zoomeye.org/domain/search"
 # Setting ZoomEye Query Fields
 ZOOMEYE_FIELDS_HOST = ["ID", "IP", "Port", "Protocol", "Service", "ISP", "Country", "City", "Title", "Time"]
 ZOOMEYE_FIELDS_WEB = ["ID", "IP", "URL", "Title", "OS", "WebApp", "DB", "Language", "Server", "Time"]
-ZOOMEYE_FIELDS_INFO = ["Plan", "Search", "Stats", "Interval"]
+ZOOMEYE_FIELDS_INFO = ["Name","Plan", "Search", "Expired_AT"]
 ZOOMEYE_FIELDS_DOMAIN = ["ID", "Domain", "IP", "TimeStamp"]
+COMMAND_INFO = ["Options", "Value", "Info"]
+SEMSITIVE_INFO = ["ID", "SEMSITIVE"]
 HOST_SCAN_INFO = ["IP", "Domain", "Title"]
+
+# Set executable system commands
+OS_SYSTEM = []
+if PLATFORM == "Windows":
+        OS_SYSTEM = ["ipconfig", "dir", "whoami", "ping", "telnet", "cd", "findstr", "chdir","find", "mysql", "type", "curl", "netstat", "tasklist", "taskkill", "tracert", "del", "ver"]
+else:
+        OS_SYSTEM = ["ifconfig", "ls", "cat", "pwd", "whoami", "ping", "find", "grep", "telnet", "mysql", "cd", "vi", "more", "less", "curl", "ps", "netstat", "rm", "touch", "mkdir", "uname"]
 
 # Kunyu OUTPUT File Path
 OUTPUT_PATH = os.path.expanduser('~/kunyu/output/')
