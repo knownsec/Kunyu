@@ -353,11 +353,14 @@ It is recommended to use Python3.2-3.9 version, other versions of Python3 may ha
 
 # 0x07 Events
 
- **404StarLink 2.0 - Galaxy**
-
  **WHC 2021 (补天白帽大会) Best Weapon of the Year Award **
 
  **KCON 2021 Arsenal**
+
+## 404Starlink
+<img src="https://github.com/knownsec/404StarLink-Project/raw/master/logo.png" width="30%">
+
+Kunyu has joined [404Starlink](https://github.com/knownsec/404StarLink)
 
 
 # 0x07 Community

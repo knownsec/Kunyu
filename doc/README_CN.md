@@ -349,11 +349,14 @@ Kunyu的自动补全支持大小写，命令记录等，使用Tab进行补全，
 
 # 0x07 Events
 
- **404StarLink 2.0 - Galaxy**
-
  **WHC 2021 (补天白帽大会) 年度最佳兵器奖**
 
  **KCON 2021 Arsenal**
+
+## 404星链计划
+<img src="https://github.com/knownsec/404StarLink-Project/raw/master/logo.png" width="30%">
+
+Kunyu 现已加入 [404星链计划](https://github.com/knownsec/404StarLink)
 
 
 # 0x08 Community
