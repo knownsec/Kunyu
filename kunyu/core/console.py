@@ -157,8 +157,9 @@ class BaseInterpreter(object):
                 )
             command_info = [["page", self.getter("page"),"Set Search Page"],
                             ["dtype", self.getter("dtype"), "Set Associated/Subdomain Search Schema"],
-                            ["timeout", self.getter("timeout"), "Set HTTP Requests Timeout"],
-                            ["btype", self.getter("btype"), "Set BatchFile Search Schema"]]
+                            ["stype", self.getter("stype"), "Set data type IPV4/IPV6 (option v4/v6)"],
+                            ["btype", self.getter("btype"), "Set BatchFile Search Schema"],
+                            ["timeout", self.getter("timeout"), "Set HTTP Requests Timeout"]]
             for info in command_info:
                 table.add_row(
                     str(info[0]), str(info[1]), str(info[2])
@@ -172,8 +173,11 @@ class BaseInterpreter(object):
             return True
 
         elif command in OS_SYSTEM:
-            command_os = "{} {}".format(command, line)
-            os.system(command_os)
+            try:
+                command_os = "{} {}".format(command, line)
+                os.system(command_os)
+            except KeyboardInterrupt:
+                print("")
             return True
 
         return False
@@ -202,7 +206,7 @@ class BaseInterpreter(object):
                 sys.exit(0)
 
             except Exception as err:
-                console.print(err)
+                # console.print(err)
                 continue
 
 

@@ -93,7 +93,7 @@ Global commands:
         HostCrash <IP> <Domain>                   Host Header Scan hidden assets
         Seebug <query>                            Search Seebug vulnerability information
         set <option>                              Set Global arguments values
-        view <ID>                                 Look over banner row data information
+        view/views <ID>                           Look over http/ssl row data information
         SearchKeyWord                             Query sensitive information by keyword
         Pocsuite3                                 Invoke the pocsuite component
         ExportPath                                Returns the path of the output file
@@ -109,8 +109,9 @@ Global commands:
 ZoomEye:
 	page <Number>    				The number of pages returned by the query
 	dtype <0/1>      				Query associated domain name/subdomain name
+	stype <v4/v6>					stype <v4/v6> Set to get data type IPV4 or IPV6
 	btype <host/web> 				Set the API interface for batch query
-	timeout <num>					Set the timeout period of Kunyu HTTP request 
+	timeout <num>					Set the timeout period of Kunyu HTTP request
 ```
 
 ## Use case introduction
@@ -171,6 +172,14 @@ Command format: **SearchDomain Domain**
 
 ![](./images/searchdomain.png)
 
+**Set the type of data to be obtained**
+
+After the V1.6.1 version, the user can set the data type obtained through the stype parameter to IPV4 or IPV6 to realize the application scenario, and the default parameter is v4.
+
+Command format: **set stype = v6**
+
+![](./images/stype.png)
+
 **View Banner Information** 
 
 The user can view the banner corresponding to the specified serial number through the view command, so as to further analyze the front-end code and Header header, and the user can intercept the banner information for further association matching. 
@@ -178,6 +187,12 @@ The user can view the banner corresponding to the specified serial number throug
 Command format: **view ID** 
 
 ![](./images/view.png)
+
+The user can also view the SSL certificate information of the specified serial number through the views command, and further associate it by extracting the sensitive information in the SLL certificate information.
+
+Command format: **views ID**
+
+![](./images/views.png)
 
 **Collection of Sensitive Information** 
 
@@ -363,7 +378,7 @@ It is recommended to use Python3.2-3.9 version, other versions of Python3 may ha
 Kunyu has joined [404Starlink](https://github.com/knownsec/404StarLink)
 
 
-# 0x07 Community
+# 0x08 Community
 
 If you have any questions, you can submit an issue under the project, or contact us through the following methods.
 
