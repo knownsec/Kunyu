@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.6.1] - 2021-11-20
+### Added
+- Optimized the issue of CTRL+C exiting the program when executing system commands
+- The stype parameter is added, and the data type can be set to IPV4 or IPV6
+- Added the views command to get the original information of the SSL certificate [views]
+
 ## [v1.6] - 2021-11-12
 ### Added
 - Brand new style heading

@@ -94,7 +94,7 @@ Global commands:
         HostCrash <IP> <Domain>                   Host Header Scan hidden assets
         Seebug <query>                            Search Seebug vulnerability information
         set <option>                              Set Global arguments values
-        view <ID>                                 Look over banner row data information
+        view/views <ID>                           Look over http/ssl row data information
         SearchKeyWord                             Query sensitive information by keyword
         Pocsuite3                                 Invoke the pocsuite component
         ExportPath                                Returns the path of the output file
@@ -110,6 +110,7 @@ Global commands:
 ZoomEye:
 	page <Number>    查询返回页数(默认查询一页，每页20条数据)
 	dtype <0/1>      查询关联域名/子域名(设置0为查询关联域名，反之为子域名)
+	stype <v4/v6>	 设置获取数据类型IPV4或IPV6，默认为 ipv4,ipv6 全选
 	btype <host/web> 设置批量查询的API接口(默认为HOST)
 	timeout <num>	 设置Kunyu HTTP请求的超时时间
 ```
@@ -172,6 +173,14 @@ SearchIcon /root/favicon.ico
 
 ![](../images/searchdomain.png)
 
+**设置获取数据类型**
+
+在V1.6.1版本后，用户可以通过stype参数设置获取的数据类型为IPV4或者IPV6，实现应用场景，默认参数为v4。
+
+命令格式：**set stype = v6**
+
+![](../images/stype.png)
+
 **查看Banner信息**
 
 用户可以通过view命令查看指定序号对应信息的Banner，从而进一步分析前端代码及Header头，用户可以截取banner信息进一步的关联匹配。
@@ -179,6 +188,12 @@ SearchIcon /root/favicon.ico
 命令格式: **view ID**
 
 ![](../images/view.png)
+
+用户也可以通过views命令查看指定序号的SSL证书信息，通过提取SLL证书信息中的敏感信息进一步关联。
+
+命令格式：**views ID**
+
+![](../images/views.png)
 
 **敏感信息收集**
 

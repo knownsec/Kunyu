@@ -49,6 +49,7 @@ class ZoomeyeSearch(object):
     def __init__(self, method):
         self.auth = None
         self.search = None
+        self.stype = None
         self.page = 1
         self.method = method
         self.headers = {
@@ -61,6 +62,7 @@ class ZoomeyeSearch(object):
             nonlocal func
             req_list = []
             login_url = func(self, *args, **kwargs)
+            params["sub_type"] = self.stype
             try:
                 for num in range(int(self.page)):
                     params['query'], params['page'] = self.search, (num + 1)
@@ -133,7 +135,7 @@ class ZoomeyeSearch(object):
 
 # After the SDK public,The interface to get the data.
 @ZoomeyeSearch(method="GET")
-def _dork_search(self, url, search, page):
+def _dork_search(self, url, search, page, sub_type):
     """"The logic layer of ZoomEye processes the requested data
         and feeds it back to the request layer to obtain the original data
     """
@@ -142,6 +144,7 @@ def _dork_search(self, url, search, page):
             raise ArithmeticError
         self.page = page
         self.search = search
+        self.stype = sub_type.lower()
         return url
 
     except ArithmeticError:
@@ -169,9 +172,11 @@ class ZoomEye:
     from kunyu.config.setting import ZOOMEYE_FIELDS_HOST, ZOOMEYE_FIELDS_WEB, ZOOMEYE_FIELDS_INFO, ZOOMEYE_FIELDS_DOMAIN
     from kunyu.utils.convert import convert
     raw_data_params = {}
+    ssl_data_params = {}
     sensitive_params = []
     page = 1
     dtype = 0
+    stype = "v4"
     btype = "host"
     timeout = 30
 
@@ -188,7 +193,7 @@ class ZoomEye:
         HostCrash <IP> <Domain>                   Host Header Scan hidden assets
         Seebug <query>                            Search Seebug vulnerability information
         set <option>                              Set Global arguments values
-        view <ID>                                 Look over banner row data information
+        view/views <ID>                           Look over banner row data information
         SearchKeyWord                             Query sensitive information by keyword
         Pocsuite3                                 Invoke the pocsuite component
         ExportPath                                Returns the path of the output file
@@ -199,8 +204,8 @@ class ZoomEye:
 
     # ZoomEye Command List
     Command_Info = ["help", "info", "set", "Seebug", "SearchWeb", "SearchHost", "SearchIcon", "HostCrash", "SearchBatch",
-                    "SearchCert", "SearchDomain", "EncodeHash", "Pocsuite3", "ExportPath", "show", "clear", "view", "SearchKeyWord",
-                    "exit"]
+                    "SearchCert", "SearchDomain", "EncodeHash", "Pocsuite3", "ExportPath", "show", "clear", "view", "views",
+                    "SearchKeyWord", "exit"]
 
     def __init__(self):
         self.fields_tables = None
@@ -212,6 +217,7 @@ class ZoomEye:
             :param types: Dynamically set according to the interface used
         """
         self.raw_data_params.clear()
+        self.ssl_data_params.clear()
         self.sensitive_params.clear()
         GlobalVar.set_timeout_resp(self.timeout)
         table = Table(show_header=True, style="bold")
@@ -238,17 +244,21 @@ class ZoomEye:
             return logger.warning("Please enter the correct field")
 
         # Get data information
-        for result in _dork_search(api_url, search, self.page):
+        for result in _dork_search(api_url, search, self.page, self.stype):
             try:
                 total = result['total']
                 webapp_name, server_name, db_name, system_os, language = "", "", "", "", ""
                 for i in range(len(result[result_type])):
                     num += 1
-                    title, lat, lon = "", "", ""
+                    title, data_isp = "", ""
                     data = self.convert(result[result_type][i])
                     if api_url == HOST_SEARCH_API:
                         if data.portinfo.title:
                             title = data.portinfo.title[0]
+                        try:
+                            data_isp = data.geoinfo.isp
+                        except:
+                            pass
                         """
                         if data.geoinfo.location:
                             lat = data.geoinfo.location.lat
@@ -256,16 +266,23 @@ class ZoomEye:
                         """
                         # Set the output field
                         table.add_row(str(num), data.ip, str(data.portinfo.port), str(data.portinfo.service),
-                                      str(data.portinfo.app), str(data.geoinfo.isp), str(data.geoinfo.country.names.en),
+                                      str(data.portinfo.app), str(data_isp), str(data.geoinfo.country.names.en),
                                       str(data.geoinfo.city.names.en), str(title), str(data.timestamp).split("T")[0])
 
                         # Set the exported fields
                         export_host = [str(num), data.ip, str(data.portinfo.port), str(data.portinfo.service),
-                                       str(data.portinfo.app), str(data.geoinfo.isp), str(data.geoinfo.country.names.en),
+                                       str(data.portinfo.app), str(data_isp), str(data.geoinfo.country.names.en),
                                        str(data.geoinfo.city.names.en), str(title), str(data.timestamp).split("T")[0]]
 
                         # Reset the <raw Data Params> element
                         self.raw_data_params[num] = data.portinfo.banner
+
+                        # Reset the <ssl raw Data Params> element
+                        try:
+                            ssl_raw_data = data.ssl
+                            self.ssl_data_params[num] = ssl_raw_data
+                        except:
+                            pass
 
                         # Get the sensitive information in the banner
                         sensitive = SearchKeyWord().get_keyword_sensitive(data.portinfo.banner)
@@ -300,6 +317,13 @@ class ZoomEye:
 
                         # Reset the <raw Data Params> element
                         self.raw_data_params[num] = data.raw_data
+
+                        # Reset the <ssl raw Data Params> element
+                        try:
+                            ssl_raw_data = data.ssl
+                            self.ssl_data_params[num] = ssl_raw_data
+                        except:
+                            pass
 
                         # Get the sensitive information in the banner
                         sensitive = SearchKeyWord().get_keyword_sensitive(data.raw_data)
@@ -483,10 +507,34 @@ class ZoomEye:
             else:
                 console.log("Banner Information is:\n", style="green")
                 console.print(raw_data)
-
+                print()
         except ArithmeticError:
             logger.warning("No retrieval operation is performed or the length of the dictionary key value is exceeded")
             return
+
+    @classmethod
+    # look over ssl row_data info
+    def command_views(cls, serial):
+        """
+            View ssl raw data information
+            You can views any ssl raw data by entering the serial number
+            :param serial): Please enter serial number ID
+        """
+        try:
+            # If the key parameter is not specified, the key parameter is automatically set to 1
+            serials = 1 if serial is "" else serial
+            ssl_raw_data = cls.ssl_data_params.get(int(serials))
+            # Check whether the returned result is None
+            if ssl_raw_data is None:
+                raise ArithmeticError
+            else:
+                console.log("SSL Banner Information is:\n", style="green")
+                console.print(ssl_raw_data)
+                print()
+        except ArithmeticError:
+            logger.warning("SSL Banner information is empty")
+            return
+        pass
 
     @classmethod
     def command_searchkeyword(cls, *args, **kwargs):
