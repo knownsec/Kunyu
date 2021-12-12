@@ -17,8 +17,8 @@ import socket
 import ssl
 import mmh3
 import requests
-
 from tld import get_fld
+
 from kunyu.utils.log import logger
 from kunyu.config.setting import IP_ADDRESS_REGEX, HTTP_CHECK_REGEX
 

@@ -273,6 +273,30 @@ HostCrash 1.1.1.1 G:\host.txt
 
 ![](./images/searchcrashs.png)
 
+**Serverless HostCrash Scan**
+
+Kunyu v1.6.2 adds an interesting feature that combines the cloud function to perform HOSTS collisions on the target. In this way, our scanned IP is effectively hidden to prevent it from being captured by the target situational awareness, and it also prevents WAF from banning the real IP. , And conceal the features. Through the following scanning effect, it can be found that the scanned IPs are all cloud service vendors and each scan is a random IP address. You can choose whether to enable it by configuring the cloud function address during initialization.
+
+**Configuration Guide:** [Configuration Method of Cloud Function](./doc/Serverless_EN.md)
+
+**Related technology:**https://www.anquanke.com/post/id/261551
+
+**Situational Awareness Scanning Effect:**
+
+![](./images/serverless.png)
+
+**Asset distribution map**
+
+v1.6.2 adds the CreateMap command, which can generate a geographic location distribution map for the assets retrieved last time, and more vividly describe the mapping relationship between network space and real space. It is located in the same output directory as Excel, and the generated asset map is the same as the last time. The number of search results is related.
+
+**Generate distribution map**
+
+![](./images/createmap.png)
+
+**Web page**
+
+![](./images/map.png)
+
 **Data result**
 
 All search results are saved in the user's root directory, and the directory is created based on the current timestamp. All query results of a single start are stored in an Excel format under one directory, giving a more intuitive experience. The output path can be returned through the ExportPath command.
@@ -345,11 +369,11 @@ When using the Pocsuite command linkage, if it is a packaged Kunyu version, the 
 **11. Kunyu can execute system commands as follows. ** 
 
 **Windows:**
-        OS_SYSTEM = [**"ipconfig", "dir", "whoami", "ping", "telnet", "cd", "findstr", "chdir","find", "mysql", "type", "curl", "netstat", "tasklist", "taskkill", "tracert", "del", "ver"**]
+        OS_SYSTEM = [**"ipconfig", "dir", "whoami", "ping", "telnet", "cd", "findstr", "chdir","find", "mysql", "type", "curl", "netstat", "tasklist", "taskkill", "tracert", "del", "ver","nmap"]**
 
 **Linux/Mac：**
 
-​	OS_SYSTEM = [**"ifconfig", "ls", "cat", "pwd", "whoami", "ping", "find", "grep", "telnet", "mysql", "cd", "vi", "more", "less", "curl", "ps", "netstat", "rm", "touch", "mkdir", "uname"**]
+​	OS_SYSTEM = [**"ifconfig", "ls", "cat", "pwd", "whoami", "ping", "find", "grep", "telnet", "mysql", "cd", "vi", "more", "less", "curl", "ps", "netstat", "rm", "touch", "mkdir", "uname","nmap"]**
 
 **12, Kunyu operating environment** 
 

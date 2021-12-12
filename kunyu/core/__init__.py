@@ -41,6 +41,7 @@ parser_init_console.add_argument("--username", help='ZoomEye Username')
 parser_init_console.add_argument("--password", help='ZoomEye Password')
 parser_init_console.add_argument("--seebug", help='ZoomEye Password')
 parser_init_console.add_argument("--output", help='Set Output File Path')
+parser_init_console.add_argument("--serverless", help='Set Serverless API')
 
 args = parser.parse_args()
 
@@ -72,6 +73,11 @@ def initial_config():
     if not conf.has_section("path"):
         conf.add_section("path")
         conf.set("path", "output", setting.OUTPUT_PATH)
+
+    # Set Serverless API Address Config
+    if not conf.has_section("Serverapi"):
+        conf.add_section("Serverapi")
+        conf.set("Serverapi", "serverless", "None")
 
 # Verify the login status of the ZoomEye account
 def _get_login():
@@ -105,6 +111,10 @@ try:
     # set output file path
     if args.output:
         conf.set("path", "output", args.output)
+
+    # Used for CrashHost function
+    if args.serverless:
+        conf.set("Serverapi", "serverless", args.serverless)
 
 except requests.HTTPError as err:
     print("\033[31;1m{}\033[0m".format(err))

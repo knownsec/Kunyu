@@ -27,6 +27,7 @@ from kunyu.config import setting
 
 OUTPUT_PATH = conf.get("path", "output")
 
+
 def createdir():
     # Create the results output directory.
     __dirnamae = datetime.datetime.now().strftime("%Y%m%d%H%M")
