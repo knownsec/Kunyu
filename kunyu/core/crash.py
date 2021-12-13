@@ -24,6 +24,7 @@ from kunyu.config.setting import UA, DOMAIN_SEARCH_API, DOMAIN_CHECK_REGEX, IP_A
 console = Console(color_system="auto", record=True)
 ZOOMEYE_KEY = conf.get("zoomeye", "apikey")
 ZOOMEYE_TOKEN = conf.get("login", "token")
+SERVERLESS_API = conf.get("Serverapi", "serverless")
 
 
 class HostScan:
@@ -130,7 +131,7 @@ class HostScan:
         """
         ip_list = []
         if self.__is_valid_ip(ip):
-                ip_list.append(ip)
+            ip_list.append(ip)
         else:
             for ip_address in get_file(ip):
                 ip_list.append(ip_address)
@@ -142,8 +143,10 @@ class HostScan:
             :param search: Ways to obtain domain names
             :param ip: IP address to be collided
         """
-        resp = []
-        crash_list = []
+        resp, crash_list = [], []
+        tmp_list = []
+        status = False
+        if SERVERLESS_API != "None": status = True
         # http and https protocol collision
         protocol = ['http://{}/', 'https://{}/']
         self.params["q"] = search
@@ -152,14 +155,18 @@ class HostScan:
         for server in protocol:
             for ip_address in url:
                 urls = server.format(ip_address)
+                resp_url = SERVERLESS_API if status else urls
                 for domain in domain_list:
-                    headers = {'Host': domain.strip(),
-                                'User-Agent': random.choice(UA),
-                                'ip': urls,
-                                }
+                    headers = {
+                        'User-Agent': random.choice(UA),
+                        'ip': urls,
+                    }
+                    # The cloud function sets header hosts
+                    if status:headers["hosts"] = domain.strip()
+                    else:headers["host"] = domain.strip()
                     # Concurrent requests through the encapsulated coroutine module
                     resp.append(grequests.get(
-                        urls, headers=headers, timeout=2, verify=False)
+                        resp_url, headers=headers, timeout=5, verify=False)
                     )
 
         res_list = grequests.map(resp)
@@ -167,13 +174,19 @@ class HostScan:
             try:
                 # Determine the HTTP status code that needs to be obtained
                 if res.status_code == 200 or res.status_code == 302 or res.status_code == 301:
-                    res.encoding = 'gbk2312'
-                    # Get the title of the returned result
-                    title = re.findall('<title>(.+)</title>', res.text)
-                    crash_list.append(
-                        [res.request.headers['ip'], res.request.headers['Host'], title[0]]
-                    )
+                    if res.text != "false":
+                        res.encoding = 'gbk2312'
+                        # Get the title of the returned result
+                        title = re.findall('<title>(.+)</title>', res.text)
+                        tmp_list = [res.request.headers['ip'], title[0]]
+                        if status:
+                            tmp_list.append(res.request.headers['hosts'])
+                            # Unicode decoding of the information returned by cloud functions
+                            tmp_list[1] = title[0].encode('utf8').decode('unicode_escape')
+                        else:tmp_list.append(res.request.headers['host'])
+                        crash_list.append(tmp_list)
             except Exception:
                 continue
 
         return crash_list
+

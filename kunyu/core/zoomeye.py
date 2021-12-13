@@ -11,6 +11,7 @@ import os
 import sys
 import json
 import random
+import datetime
 
 import requests
 import platform
@@ -27,7 +28,9 @@ from pocsuite3.lib.core.interpreter import PocsuiteInterpreter
 from pocsuite3.lib.core.option import init_options
 
 import kunyu.lib.encode as encode
-from kunyu.config.setting import UA, USER_INFO_API, HOST_SEARCH_API, WEB_SEARCH_API, DOMAIN_SEARCH_API, HOST_SCAN_INFO, SEMSITIVE_INFO
+from kunyu.config.setting import UA, USER_INFO_API, HOST_SEARCH_API, WEB_SEARCH_API, DOMAIN_SEARCH_API, HOST_SCAN_INFO, \
+    SEMSITIVE_INFO
+from kunyu.core.createmap import create_data_map
 from kunyu.lib.export import export_xls
 from kunyu.lib.batchfile import get_file
 from kunyu.core.crash import HostScan
@@ -44,6 +47,7 @@ ZOOMEYE_KEY = conf.get("zoomeye", "apikey")
 ZOOMEYE_TOKEN = conf.get("login", "token")
 
 params = {}
+
 
 class ZoomeyeSearch(object):
     def __init__(self, method):
@@ -158,27 +162,25 @@ def _dork_search(self, url, search, page, sub_type):
 def _user_info(self):
     return USER_INFO_API
 
+
 # Set Global variate
 class GlobalVar:
     timeout_resp = 30
+
     def set_timeout_resp(timeout_resp):
         GlobalVar.timeout_resp = timeout_resp
 
     def get_timeout_resp(*args):
         return GlobalVar.timeout_resp
 
+
 # The Display class of the tool
 class ZoomEye:
     from kunyu.config.setting import ZOOMEYE_FIELDS_HOST, ZOOMEYE_FIELDS_WEB, ZOOMEYE_FIELDS_INFO, ZOOMEYE_FIELDS_DOMAIN
     from kunyu.utils.convert import convert
-    raw_data_params = {}
-    ssl_data_params = {}
-    sensitive_params = []
-    page = 1
-    dtype = 0
-    stype = "v4"
-    btype = "host"
-    timeout = 30
+    ssl_data_params, raw_data_params, sensitive_params, scatter_params = {}, {}, [], []
+    page, dtype, timeout = 1, 0, 30
+    stype, btype = "v4", "host"
 
     # Global commands List
     help = """Global commands:
@@ -197,18 +199,25 @@ class ZoomEye:
         SearchKeyWord                             Query sensitive information by keyword
         Pocsuite3                                 Invoke the pocsuite component
         ExportPath                                Returns the path of the output file
+        CreateMap                                 Generate an IP distribution heat map
         clear                                     Clear the console screen
         show                                      Show can set options
         help                                      Print Help info
         exit                                      Exit KunYu & """
 
     # ZoomEye Command List
-    Command_Info = ["help", "info", "set", "Seebug", "SearchWeb", "SearchHost", "SearchIcon", "HostCrash", "SearchBatch",
-                    "SearchCert", "SearchDomain", "EncodeHash", "Pocsuite3", "ExportPath", "show", "clear", "view", "views",
-                    "SearchKeyWord", "exit"]
+    Command_Info = ["help", "info", "set", "Seebug", "SearchWeb", "SearchHost", "SearchIcon", "HostCrash",
+                    "SearchBatch", "SearchCert", "SearchDomain", "EncodeHash", "Pocsuite3", "ExportPath",
+                    "show", "clear", "view", "DirectoryCrash", "views", "SearchKeyWord", "CreateMap", "exit"]
 
     def __init__(self):
         self.fields_tables = None
+
+    def __params_clear(self):
+        self.raw_data_params.clear()
+        self.ssl_data_params.clear()
+        self.sensitive_params.clear()
+        self.scatter_params.clear()
 
     def __command_search(self, search, types="host"):
         """"The raw data obtained is processed and finally displayed on the terminal,
@@ -216,9 +225,7 @@ class ZoomEye:
             :param search: zoomeye grammar search statement
             :param types: Dynamically set according to the interface used
         """
-        self.raw_data_params.clear()
-        self.ssl_data_params.clear()
-        self.sensitive_params.clear()
+        self.__params_clear(self)
         GlobalVar.set_timeout_resp(self.timeout)
         table = Table(show_header=True, style="bold")
         global total, api_url, result, FIELDS, export_host
@@ -259,11 +266,12 @@ class ZoomEye:
                             data_isp = data.geoinfo.isp
                         except:
                             pass
-                        """
+
+                        # Set the Latitude and longitude information
                         if data.geoinfo.location:
                             lat = data.geoinfo.location.lat
                             lon = data.geoinfo.location.lon
-                        """
+
                         # Set the output field
                         table.add_row(str(num), data.ip, str(data.portinfo.port), str(data.portinfo.service),
                                       str(data.portinfo.app), str(data_isp), str(data.geoinfo.country.names.en),
@@ -273,6 +281,9 @@ class ZoomEye:
                         export_host = [str(num), data.ip, str(data.portinfo.port), str(data.portinfo.service),
                                        str(data.portinfo.app), str(data_isp), str(data.geoinfo.country.names.en),
                                        str(data.geoinfo.city.names.en), str(title), str(data.timestamp).split("T")[0]]
+
+                        # Set scatter_params info
+                        self.scatter_params.append({"lng": str(lon), "lat": str(lat), "ip": data.ip})
 
                         # Reset the <raw Data Params> element
                         self.raw_data_params[num] = data.portinfo.banner
@@ -366,8 +377,8 @@ class ZoomEye:
             )
         info.user_info.expired_at = None if info.user_info.expired_at == "" else info.user_info.expired_at
         console.log("User Information:", style="green")
-        table.add_row(str(info.user_info.name),str(info.user_info.role),
-                      str(search_quota),str(info.user_info.expired_at))
+        table.add_row(str(info.user_info.name), str(info.user_info.role),
+                      str(search_quota), str(info.user_info.expired_at))
         console.print(table)
         logger.info("User information retrieval is completed\n")
 
@@ -451,10 +462,10 @@ class ZoomEye:
             ))
 
         except ArithmeticError:
-            logger.warning("Please specify the encryption mode")
+            return logger.warning("Please specify the encryption mode")
 
         except Exception as err:
-            logger.warning(err)
+            return logger.warning(err)
 
     @classmethod
     # Get SeeBug vulnerability information
@@ -507,10 +518,13 @@ class ZoomEye:
             else:
                 console.log("Banner Information is:\n", style="green")
                 console.print(raw_data)
-                print()
+
         except ArithmeticError:
-            logger.warning("No retrieval operation is performed or the length of the dictionary key value is exceeded")
-            return
+            return logger.warning(
+                "No retrieval operation is performed or the length of the dictionary key value is exceeded")
+
+        finally:
+            print()
 
     @classmethod
     # look over ssl row_data info
@@ -530,11 +544,11 @@ class ZoomEye:
             else:
                 console.log("SSL Banner Information is:\n", style="green")
                 console.print(ssl_raw_data)
-                print()
         except ArithmeticError:
-            logger.warning("SSL Banner information is empty")
-            return
-        pass
+            return logger.warning("SSL Banner information is empty")
+
+        finally:
+            print()
 
     @classmethod
     def command_searchkeyword(cls, *args, **kwargs):
@@ -563,6 +577,22 @@ class ZoomEye:
             return
 
     @classmethod
+    def command_createmap(cls, *args, **kwargs):
+        """
+            Create a network space asset distribution map
+            You can use the CreateMap command to generate a resource distribution map after a search
+        """
+        # Check whether Scatter Params is empty
+        if len(cls.scatter_params) == 0: return logger.warning("Asset List is Empty,Please search and try again")
+        from kunyu.config import setting
+        # Generating an export path
+        __filename = datetime.datetime.now().strftime("ScatterGram_%H%M%S.html")
+        path = os.path.join(setting.OUTPUT_PATH, __filename)
+        create_data_map(cls.scatter_params, path)
+        # Output Export path
+        logger.info(path)
+
+    @classmethod
     def command_hostcrash(cls, args):
         """
             HOST Header Crash function,Obtaining hidden Assets
@@ -586,7 +616,7 @@ class ZoomEye:
             # Set output list content
             for res in result_list:
                 table.add_row(
-                    str(res[0]), str(res[1]), str(res[2])
+                    str(res[0]), str(res[2]),str(res[1])
                 )
             # Output table list to console
             console.print(table)
@@ -595,7 +625,7 @@ class ZoomEye:
             export_xls(result_list, HOST_SCAN_INFO)
             # End of function execution
         except ArithmeticError:
-            logger.warning("Please Host IP and Domain\n")
+            return logger.warning("Please Host IP and Domain")
 
         except KeyboardInterrupt:
             return

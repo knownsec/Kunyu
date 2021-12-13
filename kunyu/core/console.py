@@ -17,7 +17,6 @@ from rich.table import Table
 from rich.console import Console
 
 from kunyu.config import setting
-from rich.console import Console
 from kunyu.utils.log import logger
 from kunyu.lib.export import createdir
 from kunyu.core.zoomeye import ZoomEye
@@ -31,6 +30,7 @@ PLATFORM = platform.system()
 # Determine the operating system clear screen command
 cmd = "cls" if PLATFORM == "Windows" else "clear"
 console = Console(color_system="auto", record=True)
+
 
 def readline_available():
     """
@@ -206,7 +206,7 @@ class BaseInterpreter(object):
                 sys.exit(0)
 
             except Exception as err:
-                # console.print(err)
+                console.print(err)
                 continue
 
 

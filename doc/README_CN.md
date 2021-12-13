@@ -271,6 +271,30 @@ HostCrash 1.1.1.1 G:\host.txt
 
 ![](../images/searchcrashs.png)
 
+**Serverless HostCrash Scan**
+
+Kunyu v1.6.2新增了一个有意思的功能，结合云函数对目标进行HOSTS碰撞，通过这样的方式有效的隐藏了我们的扫描IP防止被目标态势感知捕捉到，也防止了WAF对真实IP的封禁，并对特征进行了隐匿，通过下面的扫描效果可以发现扫描的IP均为云服务厂商且每次扫描均为随机IP地址，可以通过初始化时配置云函数地址的方式自主选择是否启用。
+
+**配置导读：** [云函数的配置方法](./doc/Serverless_CN.md)
+
+**相关技术：**https://www.anquanke.com/post/id/261551
+
+**态势感知扫描效果：**
+
+![](../images/serverless.png)
+
+**资产分布地图**
+
+v1.6.2新增CreateMap命令，可对上次检索的资产生成地理位置分布图，更形象的描述网络空间和现实空间的映射关系，与Excel位于相同的输出目录下，生成的资产图与上次搜索结果的条数相关。
+
+**生成分布图**
+
+![](../images/createmap.png)
+
+**Web页面**
+
+![](../images/map.png)
+
 **数据结果**
 
 搜索的所有结果都保存在用户根目录下，并根据当前时间戳创建目录。单次启动的所有查询结果都在一个目录下，保存为Excel格式，给予更加直观的体验。可以通过ExportPath命令返回输出路径。
@@ -340,17 +364,17 @@ Kunyu的自动补全支持大小写，命令记录等，使用Tab进行补全，
 **11、Kunyu可执行系统命令如下。**
 
 **Windows:**
-        OS_SYSTEM = [**"ipconfig", "dir", "whoami", "ping", "telnet", "cd", "findstr", "chdir","find", "mysql", "type", "curl", "netstat", "tasklist", "taskkill", "tracert", "del", "ver"**]
+        OS_SYSTEM = [**"ipconfig", "dir", "whoami", "ping", "telnet", "cd", "findstr", "chdir","find", "mysql", "type", "curl", "netstat", "tasklist", "taskkill", "tracert", "del", "ver","nmap"**]
 
 **Linux/Mac：**
 
-​	OS_SYSTEM = [**"ifconfig", "ls", "cat", "pwd", "whoami", "ping", "find", "grep", "telnet", "mysql", "cd", "vi", "more", "less", "curl", "ps", "netstat", "rm", "touch", "mkdir", "uname"**]
+​	OS_SYSTEM = [**"ifconfig", "ls", "cat", "pwd", "whoami", "ping", "find", "grep", "telnet", "mysql", "cd", "vi", "more", "less", "curl", "ps", "netstat", "rm", "touch", "mkdir", "uname","nmap"**]
 
 **12、Kunyu运行环境**
 
 这里建议使用Python3.2 — 3.9版本，Python3其他版本可能会有未知的报错，**Python2不可使用**。
 
-13、设置超时时间
+**13、设置超时时间**
 
 如果HTTP请求没有得到及时响应，可以通过增大timeout时间解决，如:set timeout = 50
 
