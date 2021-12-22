@@ -178,12 +178,12 @@ class HostScan:
                         res.encoding = 'gbk2312'
                         # Get the title of the returned result
                         title = re.findall('<title>(.+)</title>', res.text)
-                        tmp_list = [res.request.headers['ip'], title[0]]
+                        tmp_list = [res.request.headers['ip'],title[0]]
                         if status:
-                            tmp_list.append(res.request.headers['hosts'])
+                            tmp_list.insert(1,res.request.headers['hosts'])
                             # Unicode decoding of the information returned by cloud functions
-                            tmp_list[1] = title[0].encode('utf8').decode('unicode_escape')
-                        else:tmp_list.append(res.request.headers['host'])
+                            tmp_list[2] = (title[0].encode('utf8').decode('unicode_escape'))
+                        else:tmp_list.insert(1,res.request.headers['host'])
                         crash_list.append(tmp_list)
             except Exception:
                 continue
