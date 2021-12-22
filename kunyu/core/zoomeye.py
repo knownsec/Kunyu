@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # encoding: utf-8
-'''
+"""
 @author: 风起
 @contact: onlyzaliks@gmail.com
 @File: zoomeye.py
 @Time: 2021/6/24 22:18
-'''
+"""
 
 import os
 import sys
@@ -616,7 +616,7 @@ class ZoomEye:
             # Set output list content
             for res in result_list:
                 table.add_row(
-                    str(res[0]), str(res[2]),str(res[1])
+                    str(res[0]), str(res[1]),str(res[2])
                 )
             # Output table list to console
             console.print(table)
