@@ -1,0 +1,7 @@
+KXID: kx-2022-04
+author: 风起
+createDate: 2022-1-4
+description: '''Telnet'' Remote Code Execution (RCE)'
+kx_name: Denver Smart Wifi Camera SHC-150
+kx_query: '"goke login:" +port:23'
+source: https://github.com/wikiZ/Kunyu

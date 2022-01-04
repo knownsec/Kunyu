@@ -236,6 +236,36 @@ EncodeHash base64 dasdasdsa
 
 ![](../images/seebug.png)
 
+**加载指纹文件**
+
+Kunyu V1.6.4版本新增了加载外部指纹库的功能，Kunyu默认提供了5条指纹文件作为参考，用户可以编写自己的指纹文件进行加载或分享使用，更加灵活的进行检索，方便在溯源、安全研究、红队攻防中资源共享，增强团队协作。
+
+可以通过**show rule**命令查看当前加载指纹库的信息。
+
+![](../images/rule.png)
+
+默认读取指纹文件目录是在**项目目录/kunyu/rule**下，可以通过**kunyu init --rule C:\风起\rule**进行自定义读取指纹文件路径的设置。
+
+可以使用**show config**命令查看kunyu配置文件的信息。
+
+![](../images/showconfig.png)
+
+在面对复杂的指纹信息时，可以通过**项目目录/kunyu/createrule.py**生成yaml文件
+
+![](../images/createrule.png)
+
+yaml指纹文件格式如下，需要注意要严格按照下面标准格式，不能缺少字段。
+
+```bash
+KXID: kx-2022-07
+author: 风起
+createDate: 2022-1-4
+description: 查找公网部署的ngrok反向代理
+kx_name: ngrok代理工具指纹
+kx_query: '''Server: beegoServer:1.12.0'' +''<a href="/login/index">Found</a>.'''
+source: https://github.com/wikiZ/Kunyu
+```
+
 **设置参数**
 
 当设置set page = 2时，返回结果为40条，大家可以通过修改page参数，设置查询的页数，需要注意1 page = 20/条 ，可以根据需求修改该值，获取更多返回结果。

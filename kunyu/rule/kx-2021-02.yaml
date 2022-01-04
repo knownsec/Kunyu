@@ -1,0 +1,8 @@
+KXID: kx-2021-02
+author: 风起
+createDate: '2021-12-28'
+description: Log4j2漏洞影响的CAS设备
+kx_name: CAS Log4j2 vulnerability
+kx_query: '''<body id="cas">'' +''<section class="row">'' +''<meta charset="UTF-8"
+  />'''
+source: https://github.com/wikiZ/Kunyu/

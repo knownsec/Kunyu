@@ -1,0 +1,7 @@
+KXID: kx-2022-05
+author: 风起
+createDate: 2022-1-4
+description: 公网中部署ThinkPHP的框架主机
+kx_name: ThinkPHP
+kx_query: '"X-Powered-By: ThinkPHP" +"Set-Cookie: PHPSESSID="'
+source: https://github.com/wikiZ/Kunyu
