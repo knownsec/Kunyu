@@ -27,7 +27,8 @@ def main():
 
         # Call the main class
         KunyuInterpreter().main()
-    except Exception:
+    except Exception as err:
+        logger_console.error(err)
         # Output initialization help document
         logger_console.info(__help__.format(datil=init))
 

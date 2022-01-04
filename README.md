@@ -235,6 +235,36 @@ Command format: **Seebug tongda**
 
 ![](./images/seebug.png)
 
+**Load fingerprint file**
+
+Kunyu V1.6.4 adds the function of loading an external fingerprint library. Kunyu provides 5 fingerprint files as a reference by default. Users can write their own fingerprint files to load or share, and retrieve them more flexibly, which is convenient for traceability and security. Resource sharing in research and red team offense and defense, enhance teamwork.
+
+You can view the information of the currently loaded fingerprint library through the **show rule** command.
+
+![](./images/rule.png)
+
+The default read fingerprint file directory is under **project directory/kunyu/rule**, you can customize the read fingerprint file path setting through **kunyu init --rule C:\风起\rule**.
+
+You can use the **show config** command to view the information of the Kunyu configuration file.
+
+![](./images/showconfig.png)
+
+When faced with complex fingerprint information, you can generate a yaml file through **project directory/kunyu/createrule.py**
+
+![](./images/createrule.png)
+
+The format of the yaml fingerprint file is as follows. Please note that the following standard format must be strictly followed, and no fields are missing.
+
+```bash
+KXID: kx-2022-07
+author: 风起
+createDate: 2022-1-4
+description: 查找公网部署的ngrok反向代理
+kx_name: ngrok代理工具指纹
+kx_query: '''Server: beegoServer:1.12.0'' +''<a href="/login/index">Found</a>.'''
+source: https://github.com/wikiZ/Kunyu
+```
+
 **Setting parameters**
 
 When set page = 2, the returned results are 40. You can modify the page parameter to set the number of pages to be queried. Note that 1 page = 20/items. You can modify the value according to your needs to get more returned results. 

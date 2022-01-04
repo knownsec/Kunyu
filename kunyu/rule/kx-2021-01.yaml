@@ -1,0 +1,7 @@
+KXID: kx-2021-01
+author: 风起
+kx_name: ngrok代理工具指纹
+description: 查找公网部署的ngrok反向代理
+kx_query: '''Server: beegoServer:1.12.0'' +''<a href="/login/index">Found</a>.'''
+createDate: '2021-12-28'
+source: https://github.com/wikiZ/Kunyu/

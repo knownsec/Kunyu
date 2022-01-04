@@ -28,6 +28,8 @@ ZOOMEYE_FIELDS_DOMAIN = ["ID", "Domain", "IP", "TimeStamp"]
 COMMAND_INFO = ["Options", "Value", "Info"]
 SEMSITIVE_INFO = ["ID", "SEMSITIVE"]
 HOST_SCAN_INFO = ["IP", "Domain", "Title"]
+RULE_INFO = ["KXID", "Author", "KX_Name", "Description", "KX_Finger", "CreateDate", "Source"]
+RULE_PARMAS = None
 
 # Set executable system commands
 OS_SYSTEM = []
@@ -38,6 +40,8 @@ else:
 
 # Kunyu OUTPUT File Path
 OUTPUT_PATH = os.path.expanduser('~/kunyu/output/')
+# Kunyu Rule File Path
+RULE_FILE_PATH = os.path.abspath(os.path.dirname(os.path.dirname(__file__))) + "/rule"
 
 # REGEX rule
 IP_ADDRESS_REGEX = r"(([01]{0,1}\d{0,1}\d|2[0-4]\d|25[0-5])\.){3}([01]{0,1}\d{0,1}\d|2[0-4]\d|25[0-5])"

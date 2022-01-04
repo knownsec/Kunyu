@@ -1,0 +1,7 @@
+KXID: kx-2022-06
+author: 风起
+createDate: 2022-1-4
+description: 部署在公网中的H3C SecPath设备
+kx_name: H3C SecPath下一代防火墙
+kx_query: 'title:"Web user login" +"X-Frame-Options: SAMEORIGIN"'
+source: https://github.com/wikiZ/Kunyu/

@@ -36,10 +36,12 @@ parser_init_console = subparsers.add_parser('init', help='Enter init information
                                             formatter_class=argparse.RawDescriptionHelpFormatter,
                                             usage=argparse.SUPPRESS, add_help=True)
 
+
+parser_init_console.add_argument("--seebug", help='Seebug API Key')
 parser_init_console.add_argument("--apikey", help='ZoomEye API Key')
 parser_init_console.add_argument("--username", help='ZoomEye Username')
 parser_init_console.add_argument("--password", help='ZoomEye Password')
-parser_init_console.add_argument("--seebug", help='ZoomEye Password')
+parser_init_console.add_argument("--rule", help='Set Rule File Path')
 parser_init_console.add_argument("--output", help='Set Output File Path')
 parser_init_console.add_argument("--serverless", help='Set Serverless API')
 
@@ -79,6 +81,10 @@ def initial_config():
         conf.add_section("Serverapi")
         conf.set("Serverapi", "serverless", "None")
 
+    if not conf.has_section("rule"):
+        conf.add_section("rule")
+        conf.set("rule", "path", setting.RULE_FILE_PATH)
+
 # Verify the login status of the ZoomEye account
 def _get_login():
     param = '{{"username": "{}", "password": "{}"}}'.format(args.username, args.password)
@@ -115,6 +121,10 @@ try:
     # Used for CrashHost function
     if args.serverless:
         conf.set("Serverapi", "serverless", args.serverless)
+
+    # Used for rule directory path
+    if args.rule:
+        conf.set("rule", "path", args.rule)
 
 except requests.HTTPError as err:
     print("\033[31;1m{}\033[0m".format(err))

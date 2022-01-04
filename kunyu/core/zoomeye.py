@@ -27,9 +27,10 @@ from pocsuite3 import set_paths
 from pocsuite3.lib.core.interpreter import PocsuiteInterpreter
 from pocsuite3.lib.core.option import init_options
 
+from kunyu.config import setting
 import kunyu.lib.encode as encode
 from kunyu.config.setting import UA, USER_INFO_API, HOST_SEARCH_API, WEB_SEARCH_API, DOMAIN_SEARCH_API, HOST_SCAN_INFO, \
-    SEMSITIVE_INFO
+    SEMSITIVE_INFO, RULE_PARMAS
 from kunyu.core.createmap import create_data_map
 from kunyu.lib.export import export_xls
 from kunyu.lib.batchfile import get_file
@@ -193,6 +194,7 @@ class ZoomEye:
         SearchDomain <Domain>                     Domain name associated/subdomain search
         EncodeHash <encryption> <query>           Encryption method interface (base64/hex/md5/mmh3)
         HostCrash <IP> <Domain>                   Host Header Scan hidden assets
+        show <config>/<rule>                      Show can set options or Kunyu config
         Seebug <query>                            Search Seebug vulnerability information
         set <option>                              Set Global arguments values
         view/views <ID>                           Look over banner row data information
@@ -201,7 +203,6 @@ class ZoomEye:
         ExportPath                                Returns the path of the output file
         CreateMap                                 Generate an IP distribution heat map
         clear                                     Clear the console screen
-        show                                      Show can set options
         help                                      Print Help info
         exit                                      Exit KunYu & """
 
@@ -385,6 +386,13 @@ class ZoomEye:
     @classmethod
     # ZoomEye host search method
     def command_searchhost(cls, search):
+        # Checks whether the fingerprint rule file exists
+        if setting.RULE_PARMAS is not None:
+            # Traverses to find whether the specified fingerprint rule number exists
+            for item_dict in setting.RULE_PARMAS:
+                if item_dict["KXID"] == search:
+                    # Replace with the value in the specified fingerprint rule number
+                    search = item_dict["kx_query"]
         return cls.__command_search(cls, search)
 
     @classmethod
@@ -551,6 +559,10 @@ class ZoomEye:
             print()
 
     @classmethod
+    def command_show(cls, line):
+        pass
+
+    @classmethod
     def command_searchkeyword(cls, *args, **kwargs):
         try:
             keyword_param = set()
@@ -629,3 +641,9 @@ class ZoomEye:
 
         except KeyboardInterrupt:
             return
+
+    @classmethod
+    def command_test(cls, args):
+        from kunyu.config.setting import RULE_FILE_PATH
+        from kunyu.core.rule import YamlRule
+        print(YamlRule().get_yaml_list())

@@ -6,11 +6,12 @@
 @File: console.py
 @Time: 2021/7/19 22:35
 '''
-
+import logging
 import os
 import sys
 import platform
 import subprocess
+from pathlib import Path
 
 from colorama import init
 from rich.table import Table
@@ -18,11 +19,12 @@ from rich.console import Console
 
 from kunyu.config import setting
 from kunyu.utils.log import logger
+from kunyu.core.rule import YamlRule
 from kunyu.lib.export import createdir
 from kunyu.core.zoomeye import ZoomEye
 from kunyu.utils import readineng as readline
 from kunyu.config.__version__ import __introduction__
-from kunyu.config.setting import COMMAND_INFO, OS_SYSTEM
+from kunyu.config.setting import COMMAND_INFO, OS_SYSTEM, RULE_FILE_PATH, RULE_INFO
 
 init(autoreset=True)
 PLATFORM = platform.system()
@@ -30,7 +32,6 @@ PLATFORM = platform.system()
 # Determine the operating system clear screen command
 cmd = "cls" if PLATFORM == "Windows" else "clear"
 console = Console(color_system="auto", record=True)
-
 
 def readline_available():
     """
@@ -59,6 +60,9 @@ class BaseInterpreter(object):
         self.setup()
         # Create output directory
         createdir()
+        # Import rule file param
+        if Path(setting.RULE_FILE_PATH).exists():
+            setting.RULE_PARMAS = YamlRule().get_yaml_list()
 
     def setup(self):
         """ Initialization of third-party libraries
@@ -132,6 +136,29 @@ class BaseInterpreter(object):
     def default_completer(self, *ignored):
         return []
 
+    def show_rule(self):
+        tables = Table(show_header=True, style="bold")
+        for cloumn in RULE_INFO:
+            tables.add_column(
+                cloumn, justify="center", overflow="ignore"
+            )
+        # Display fingerprint file information
+        for res in setting.RULE_PARMAS:
+            tables.add_row(
+                str(res["KXID"]), str(res["author"]), str(res["kx_name"]),str(res["description"]),
+                str(res["kx_query"]), str(res["createDate"]), str(res["source"])
+            )
+        console.log("Finger Rule Info:", style="green")
+        console.print(tables)
+        return True
+
+    def show_config(self):
+        # Display configuration file information
+        config_file_path = os.path.expanduser('~/')+".kunyu.ini"
+        with open(config_file_path) as file:
+            logger.info(file.read())
+        return True
+
     def auxiliary(self, command, line=None):
         """"Set how to handle basic commands
         :return True/False
@@ -150,6 +177,10 @@ class BaseInterpreter(object):
 
         # show Global Command Info
         elif command == "show":
+            if line == "rule":
+                return self.show_rule()
+            elif line == "config":
+                return self.show_config()
             table = Table(show_header=True, style="bold")
             for cloumn in COMMAND_INFO:
                 table.add_column(
