@@ -4,7 +4,7 @@ requests
 tld
 xlwt
 grequests
-rich
+rich==11.0.0
 colorama
 pocsuite3
 colorlog
