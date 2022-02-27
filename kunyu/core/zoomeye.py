@@ -660,21 +660,23 @@ class ZoomEye:
         Verify the current viability of the last retrieval result
         """
         from kunyu.utils.convert import convert
-        try:
-            ip_port_params, num = cls.scan_alive_params, 0
-            table = Table()
-            for column in ALIVE_SCAN_INFO:
-                table.add_column(column, justify="center", overflow=overflow)
-            logger.info("IP Service Viability Scan:")
-            # Polling output table content
-            with Live(table, refresh_per_second=4):
-                for data in ip_port_params:
+        ip_port_params, num = cls.scan_alive_params, 0
+        table = Table()
+        for column in ALIVE_SCAN_INFO:
+            table.add_column(column, justify="center", overflow=overflow)
+        logger.info("IP Service Viability Scan:")
+        # Polling output table content
+        with Live(table, refresh_per_second=4):
+            for data in ip_port_params:
+                try:
                     num += 1
                     alive_status = convert(Scan_Alive_Ip().scan_port_status(data["ip"], data["port"]))
                     table.add_row(
                         str(num), alive_status.ip, str(alive_status.port), str(alive_status.state)
                     )
-            logger.info("IP Service Viability Scan is completed\n")
-        except KeyboardInterrupt:
-            return
+                except KeyboardInterrupt:
+                    return
+                except Exception:
+                    continue
+        logger.info("IP Service Viability Scan is completed\n")
 
