@@ -15,6 +15,7 @@ import datetime
 
 import requests
 import platform
+from rich.live import Live
 from rich.table import Table
 from rich.console import Console
 
@@ -28,9 +29,10 @@ from pocsuite3.lib.core.interpreter import PocsuiteInterpreter
 from pocsuite3.lib.core.option import init_options
 
 from kunyu.config import setting
+from kunyu.core.scanalive import Scan_Alive_Ip
 import kunyu.lib.encode as encode
 from kunyu.config.setting import UA, USER_INFO_API, HOST_SEARCH_API, WEB_SEARCH_API, DOMAIN_SEARCH_API, HOST_SCAN_INFO, \
-    SEMSITIVE_INFO, RULE_PARMAS
+    SEMSITIVE_INFO, RULE_PARMAS, ALIVE_SCAN_INFO
 from kunyu.core.createmap import create_data_map
 from kunyu.lib.export import export_xls
 from kunyu.lib.batchfile import get_file
@@ -179,7 +181,7 @@ class GlobalVar:
 class ZoomEye:
     from kunyu.config.setting import ZOOMEYE_FIELDS_HOST, ZOOMEYE_FIELDS_WEB, ZOOMEYE_FIELDS_INFO, ZOOMEYE_FIELDS_DOMAIN
     from kunyu.utils.convert import convert
-    ssl_data_params, raw_data_params, sensitive_params, scatter_params = {}, {}, [], []
+    ssl_data_params, raw_data_params, sensitive_params, scatter_params, scan_alive_params = {}, {}, [], [], []
     page, dtype, timeout = 1, 0, 30
     stype, btype = "v4", "host"
 
@@ -202,6 +204,7 @@ class ZoomEye:
         Pocsuite3                                 Invoke the pocsuite component
         ExportPath                                Returns the path of the output file
         CreateMap                                 Generate an IP distribution heat map
+        AliveScan                                 The viability of the last retrieval
         clear                                     Clear the console screen
         help                                      Print Help info
         exit                                      Exit KunYu & """
@@ -209,16 +212,18 @@ class ZoomEye:
     # ZoomEye Command List
     Command_Info = ["help", "info", "set", "Seebug", "SearchWeb", "SearchHost", "SearchIcon", "HostCrash",
                     "SearchBatch", "SearchCert", "SearchDomain", "EncodeHash", "Pocsuite3", "ExportPath",
-                    "show", "clear", "view", "DirectoryCrash", "views", "SearchKeyWord", "CreateMap", "exit"]
+                    "show", "clear", "view", "DirectoryCrash", "AliveScan","views", "SearchKeyWord", "CreateMap", "exit"]
 
     def __init__(self):
         self.fields_tables = None
 
     def __params_clear(self):
+        # Resetting array contents
         self.raw_data_params.clear()
         self.ssl_data_params.clear()
         self.sensitive_params.clear()
         self.scatter_params.clear()
+        self.scan_alive_params.clear()
 
     def __command_search(self, search, types="host"):
         """"The raw data obtained is processed and finally displayed on the terminal,
@@ -284,7 +289,9 @@ class ZoomEye:
                                        str(data.geoinfo.city.names.en), str(title), str(data.timestamp).split("T")[0]]
 
                         # Set scatter_params info
-                        self.scatter_params.append({"lng": str(lon), "lat": str(lat), "ip": data.ip})
+                        self.scatter_params.append({
+                            "lng": str(lon), "lat": str(lat), "ip": data.ip
+                        })
 
                         # Reset the <raw Data Params> element
                         self.raw_data_params[num] = data.portinfo.banner
@@ -295,6 +302,11 @@ class ZoomEye:
                             self.ssl_data_params[num] = ssl_raw_data
                         except:
                             pass
+
+                        self.scan_alive_params.append({
+                                "ip":data.ip,
+                                "port":str(data.portinfo.port)
+                        })
 
                         # Get the sensitive information in the banner
                         sensitive = SearchKeyWord().get_keyword_sensitive(data.portinfo.banner)
@@ -643,7 +655,28 @@ class ZoomEye:
             return
 
     @classmethod
-    def command_test(cls, args):
-        from kunyu.config.setting import RULE_FILE_PATH
-        from kunyu.core.rule import YamlRule
-        print(YamlRule().get_yaml_list())
+    def command_alivescan(cls, *args, **kwargs):
+        """
+        Verify the current viability of the last retrieval result
+        """
+        from kunyu.utils.convert import convert
+        ip_port_params, num = cls.scan_alive_params, 0
+        table = Table()
+        for column in ALIVE_SCAN_INFO:
+            table.add_column(column, justify="center", overflow=overflow)
+        logger.info("IP Service Viability Scan:")
+        # Polling output table content
+        with Live(table, refresh_per_second=4):
+            for data in ip_port_params:
+                try:
+                    num += 1
+                    alive_status = convert(Scan_Alive_Ip().scan_port_status(data["ip"], data["port"]))
+                    table.add_row(
+                        str(num), alive_status.ip, str(alive_status.port), str(alive_status.state)
+                    )
+                except KeyboardInterrupt:
+                    return
+                except Exception:
+                    continue
+        logger.info("IP Service Viability Scan is completed\n")
+

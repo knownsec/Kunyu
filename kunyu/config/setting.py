@@ -28,6 +28,7 @@ ZOOMEYE_FIELDS_DOMAIN = ["ID", "Domain", "IP", "TimeStamp"]
 COMMAND_INFO = ["Options", "Value", "Info"]
 SEMSITIVE_INFO = ["ID", "SEMSITIVE"]
 HOST_SCAN_INFO = ["IP", "Domain", "Title"]
+ALIVE_SCAN_INFO = ["ID", "IP", "Port", "Status"]
 RULE_INFO = ["KXID", "Author", "KX_Name", "Description", "KX_Finger", "CreateDate", "Source"]
 RULE_PARMAS = None
 

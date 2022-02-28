@@ -91,16 +91,18 @@ Global commands:
         SearchDomain <Domain>                     Domain name associated/subdomain search
         EncodeHash <encryption> <query>           Encryption method interface 
         HostCrash <IP> <Domain>                   Host Header Scan hidden assets
+        show <config>/<rule>                      Show can set options or Kunyu config
         Seebug <query>                            Search Seebug vulnerability information
         set <option>                              Set Global arguments values
-        view/views <ID>                           Look over http/ssl row data information
+        view/views <ID>                           Look over banner row data information
         SearchKeyWord                             Query sensitive information by keyword
         Pocsuite3                                 Invoke the pocsuite component
         ExportPath                                Returns the path of the output file
+        CreateMap                                 Generate an IP distribution heat map
+        AliveScan                                 The viability of the last retrieval
         clear                                     Clear the console screen
-        show                                      Show can set options
         help                                      Print Help info
-        exit                                      Exit KunYu &
+        exit                                      Exit KunYu & 
 ```
 
 **OPTIONS**
@@ -226,6 +228,12 @@ EncodeHash mmh3 /root/favicon.ico
 EncodeHash base64 dasdasdsa
 
 ![](./images/encode.png)
+
+**Asset Survival Scan**
+
+After Kunyu V1.6.5, the survivability scan of the last retrieval result is added, and the result is output in real time by polling.
+
+![](./images/alivescan.png)
 
 **Seebug vulnerability query**
 
