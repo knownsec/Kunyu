@@ -56,7 +56,7 @@ kunyu init --apikey <your zoomeye key> --seebug <your seebug key>
 ```
 ![](../images/setinfo.png)
 
-初次使用需要通过ZoomEye登录凭证，才使用该工具进行信息收集。
+初次使用需要通过ZoomEye登录凭证，才使用该工具进行信息收集，目前ZoomEye注册用户每月赠送1w条查询额度，足够日常工作使用。
 
 **ZoomEye访问地址：https://www.zoomeye.org/**
 
@@ -92,14 +92,16 @@ Global commands:
         SearchDomain <Domain>                     Domain name associated/subdomain search
         EncodeHash <encryption> <query>           Encryption method interface 
         HostCrash <IP> <Domain>                   Host Header Scan hidden assets
+        show <config>/<rule>                      Show can set options or Kunyu config
         Seebug <query>                            Search Seebug vulnerability information
         set <option>                              Set Global arguments values
-        view/views <ID>                           Look over http/ssl row data information
-        SearchKeyWord                             Query sensitive information by keyword
+        view/views <ID>                           Look over banner row data information
+        PupilSearch <URL>/<ID>                    Example Query sensitive interfaces
         Pocsuite3                                 Invoke the pocsuite component
         ExportPath                                Returns the path of the output file
+        CreateMap                                 Generate an IP distribution heat map
+        AliveScan                                 The viability of the last retrieval
         clear                                     Clear the console screen
-        show                                      Show can set options
         help                                      Print Help info
         exit                                      Exit KunYu &
 ```
@@ -108,11 +110,16 @@ Global commands:
 
 ```
 ZoomEye:
-	page <Number>    查询返回页数(默认查询一页，每页20条数据)
-	dtype <0/1>      查询关联域名/子域名(设置0为查询关联域名，反之为子域名)
-	stype <v4/v6>	 设置获取数据类型IPV4或IPV6，默认为 ipv4,ipv6 全选
-	btype <host/web> 设置批量查询的API接口(默认为HOST)
-	timeout <num>	 设置Kunyu HTTP请求的超时时间
+		page <Number>    			查询返回页数(默认查询一页，每页20条数据)
+		dtype <0/1>      			查询关联域名/子域名(设置0为查询关联域名，反之为子域名)
+		stype <v4/v6>	 			设置获取数据类型IPV4或IPV6，默认为 ipv4,ipv6 全选
+		btype <host/web> 			设置批量查询的API接口(默认为HOST)
+		timeout <num>	 			设置Kunyu HTTP请求的超时时间
+		thread  		 			设置PupilSearch线程数量(默认为10)
+		deep   			 			设置PupilSearch递归深度(默认为2)
+		all  			 			PupilSearch Add All Url To Check List
+		fuzz   			 			PupilSearch Add Api To Check List
+    	proxy  			 			PupilSearch HTTP Proxy
 ```
 
 ## 使用案例
@@ -195,11 +202,21 @@ SearchIcon /root/favicon.ico
 
 ![](../images/views.png)
 
-**敏感信息收集**
+**PupilSearch敏感信息收集**
 
-在Kunyu v1.6.0版本后，增加了对banner中敏感信息的获取，平时使用正常使用相关语法，设置页数，Kunyu会自动收集上一次查询结果banner信息中的敏感数据，然后通过SearchKeyWord命令查看结果。**目前将持续测试关注该功能点**。
+在Kunyu v1.7.0版本后，移除了KeyWord命令替换为PupilSearch，就是提取敏感数据的功能，当然也支持通过空间测绘提取历史banner信息，举个例子像accesskey这种，历史数据中banner泄露了敏感信息，哪怕现在换了服务，但是AK/SK没有过期，依旧可以直接利用，懂得都懂，支持提取敏感信息**（身份证号、IP、JWT、API接口、appid、appkey、GithubAccessKey，default username\password、邮箱等）**。
 
-![](../images/keyword.png)
+命令格式：
+
+**PupilSearch https://www.domain.com/**
+
+**PupilSearch ID	(通过空间测绘返回的banner提取敏感信息)**
+
+![](../images/pupilsearch_1.png)
+
+![](../images/pupilsearch_2.png)
+
+![](../images/pupilsearch_3.png)
 
 **系统命令执行**
 

@@ -1,20 +1,18 @@
 #!/usr/bin/env python
 # encoding: utf-8
-'''
+"""
 @author: 风起
 @contact: onlyzaliks@gmail.com
 @File: export.py
 @Time: 2021/6/22 15:53
-'''
+"""
 
 import os
 import datetime
 
-import csv
 import xlwt
 
 from kunyu.core import conf
-from kunyu.utils.log import logger
 from kunyu.config import setting
 
 """"
@@ -30,31 +28,13 @@ OUTPUT_PATH = conf.get("path", "output")
 
 def createdir():
     # Create the results output directory.
-    __dirnamae = datetime.datetime.now().strftime("%Y%m%d%H%M")
-    path = os.path.expanduser(OUTPUT_PATH)
-    __path = os.path.join(path, __dirnamae)
+    __path = os.path.join(os.path.expanduser(OUTPUT_PATH),
+                          datetime.datetime.now().strftime("%Y%m%d%H%M"))
     setting.OUTPUT_PATH = __path
     if os.path.exists(__path):
         return 0
     # Create Directory
     os.makedirs(__path)
-
-
-def export_csv(columns, data):
-    # The export file format is CSV
-    __filename = datetime.datetime.now().strftime("%H%M%S.csv")
-    path = os.path.join(setting.OUTPUT_PATH, __filename)
-    try:
-        with open(path, "a", newline='', encoding="utf-8-sig") as f:
-            writer = csv.writer(f)
-            writer.writerow(columns)
-            for num, key in enumerate(data["results"]):
-                writer.writerow([str(num + 1), key[0], key[1], key[2], key[3], key[4], key[5], key[6]])
-
-    except Exception:
-        logger.error("hope you don't Batch scanning")
-    logger.info("File export Path:" + path)
-
 
 def export_xls(content, head):
     style_head = xlwt.XFStyle()
@@ -74,8 +54,7 @@ def export_xls(content, head):
     excel = xlwt.Workbook(encoding='utf-8')
     sheet = excel.add_sheet("坤舆")
     for i in range(10):
-        first_col_1 = sheet.col(i)
-        first_col_1.width = 256 * 20
+        sheet.col(i).width = 256 * 20
     for index, value in enumerate(head):
         sheet.write(0, index, value, style_head)
 
@@ -99,17 +78,9 @@ def export_xls(content, head):
             sheet.write(index, i, value, style)
 
     # Save excel file
-    __time = datetime.datetime.now().strftime("%H%M%S.xls")
-    file_name = excel.save(os.path.join(setting.OUTPUT_PATH, __time))
+    file_name = excel.save(os.path.join(setting.OUTPUT_PATH,
+                                        datetime.datetime.now().strftime("%H%M%S.xls")))
     return file_name
-
-
-def export_txt(console):
-    # The export file format is TXT
-    __time = datetime.datetime.now().strftime("%H%M%S.txt")
-    path = os.path.join(setting.OUTPUT_PATH, __time)
-    console.save_text(path)
-
 
 if __name__ == "__main__":
     createdir()

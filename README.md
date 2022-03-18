@@ -55,7 +55,7 @@ kunyu init --apikey <your zoomeye key> --seebug <your seebug key>
 ```
 ![](./images/setinfo.png)
 
-You need to log in with ZoomEye credentials before using this tool for information collection.
+The first time you use it, you need to use the ZoomEye login credentials to use this tool to collect information.Currently, ZoomEye registered users are given 1w query quota every month, which is enough for daily work.
 
 ZoomEye access address: https://www.zoomeye.org/
 
@@ -95,14 +95,14 @@ Global commands:
         Seebug <query>                            Search Seebug vulnerability information
         set <option>                              Set Global arguments values
         view/views <ID>                           Look over banner row data information
-        SearchKeyWord                             Query sensitive information by keyword
+        PupilSearch <URL>/<ID>                    Example Query sensitive interfaces
         Pocsuite3                                 Invoke the pocsuite component
         ExportPath                                Returns the path of the output file
         CreateMap                                 Generate an IP distribution heat map
         AliveScan                                 The viability of the last retrieval
         clear                                     Clear the console screen
         help                                      Print Help info
-        exit                                      Exit KunYu & 
+        exit                                      Exit KunYu &
 ```
 
 **OPTIONS**
@@ -114,6 +114,12 @@ ZoomEye:
 	stype <v4/v6>					stype <v4/v6> Set to get data type IPV4 or IPV6
 	btype <host/web> 				Set the API interface for batch query
 	timeout <num>					Set the timeout period of Kunyu HTTP request
+	thread  						Set PupilSearch Thread Number(default is 10)
+	deep   							Set PupilSearch Search Deep(default is 2)
+	all  							PupilSearch Add All Url To Check List
+	fuzz   							PupilSearch Add Api To Check List
+    proxy  							PupilSearch HTTP Proxy
+	
 ```
 
 ## Use case introduction
@@ -196,11 +202,21 @@ Command format: **views ID**
 
 ![](./images/views.png)
 
-**Collection of Sensitive Information** 
+**PupilSearch Sensitive Information Collection**
 
-After Kunyu v1.6.0, the acquisition of sensitive information in the banner has been added. Normally use the relevant grammar and set the number of pages. Kunyu will automatically collect the sensitive data in the banner information of the last query result, and then use the SearchKeyWord command to view the result . **Currently, testing will continue to focus on this feature point**. 
+After Kunyu v1.7.0, the KeyWord command was removed and replaced with PupilSearch, which is the function of extracting sensitive data. Of course, it also supports the extraction of historical banner information through spatial mapping. For example, such as accesskey, the banner in historical data leaks sensitive data. Information, even if the service is changed now, but the AK/SK has not expired, it can still be used directly, understand everything, and support the extraction of sensitive information **(ID number, IP, JWT, API interface, appid, appkey, GithubAccessKey, default username \password, email, etc.)**.
 
-![](./images/keyword.png)
+**Command format:**
+
+PupilSearch https://www.domain.com/
+
+PupilSearch ID (extract sensitive information from the banner returned by spatial mapping)
+
+![](./images/pupilsearch_1.png)
+
+![](./images/pupilsearch_2.png)
+
+![](./images/pupilsearch_3.png)
 
 **System command execution** 
 

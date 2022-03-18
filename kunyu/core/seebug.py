@@ -44,9 +44,8 @@ class Seebug:
             cls.param = {
                 "app_name": search
             }
-            login_url = "%s?%s" % (SEARCH_API, urlencode(cls.param))
             resp = requests.get(
-                login_url,
+                "%s?%s" % (SEARCH_API, urlencode(cls.param)),
                 headers=cls.headers,
                 verify=False
             )

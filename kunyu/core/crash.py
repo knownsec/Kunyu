@@ -76,8 +76,7 @@ class HostScan:
                 self.params["page"] = str(i + 1)
                 result = request_get()
                 for num in range(len(result["list"])):
-                    data = convert(result["list"][num])
-                    domain_list.append(data.name)
+                    domain_list.append(convert(result["list"][num]).name)
             # Remove duplicate domain names
             domain_list = list(set(domain_list))
             console.log("Host Header Scan Domain Total: ", len(domain_list), style="green")
@@ -143,17 +142,14 @@ class HostScan:
             :param search: Ways to obtain domain names
             :param ip: IP address to be collided
         """
-        resp, crash_list = [], []
-        tmp_list = []
-        status = False
+        resp, crash_list, status = [], [], False
         if SERVERLESS_API != "None": status = True
         # http and https protocol collision
         protocol = ['http://{}/', 'https://{}/']
         self.params["q"] = search
         domain_list = self._get_file(search)
-        url = self._get_ip_file(ip)
         for server in protocol:
-            for ip_address in url:
+            for ip_address in self._get_ip_file(ip):
                 urls = server.format(ip_address)
                 resp_url = SERVERLESS_API if status else urls
                 for domain in domain_list:

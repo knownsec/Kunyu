@@ -6,7 +6,7 @@
 @File: console.py
 @Time: 2021/7/19 22:35
 '''
-import logging
+
 import os
 import sys
 import platform
@@ -14,7 +14,6 @@ import subprocess
 from pathlib import Path
 
 from colorama import init
-from rich.table import Table
 from rich.console import Console
 
 from kunyu.config import setting
@@ -22,6 +21,7 @@ from kunyu.utils.log import logger
 from kunyu.core.rule import YamlRule
 from kunyu.lib.export import createdir
 from kunyu.core.zoomeye import ZoomEye
+from kunyu.utils.tables import DisposeTables
 from kunyu.utils import readineng as readline
 from kunyu.config.__version__ import __introduction__
 from kunyu.config.setting import COMMAND_INFO, OS_SYSTEM, RULE_FILE_PATH, RULE_INFO
@@ -49,13 +49,93 @@ def auto_completion(completion=None, console=None):
     readline.set_completer(console)
     readline.parse_and_bind("tab: complete")
 
+class CommandCompleter:
+    module = "ZoomEye"
+    command, line = None, None
+    command_func_params = ["setter", "getter", "clear", "exit", "help", "set", "exportpath"]
+
+    def __init__(self) -> None:
+        self.module = CommandCompleter.module
+        self.line = CommandCompleter.line
+
+    def command_setter(self, line) -> bool:
+        """"
+        :line set options
+        """
+        args, _, number = line.strip().partition("=")
+        args, number = args.strip(), number.strip()
+        if hasattr(eval(self.module), args):
+            setattr(eval(self.module), args, number)
+        return True
+
+    def command_getter(self, line):
+        """"
+        :return options value
+        """
+        return getattr(eval(self.module), line)
+
+    def show_rule(*args, **kwargs) -> bool:
+        tables = DisposeTables().result_table(RULE_INFO)
+        # Display fingerprint file information
+        for res in setting.RULE_PARMAS:
+            tables.add_row(
+                str(res["KXID"]), str(res["author"]), str(res["kx_name"]),str(res["description"]),
+                str(res["kx_query"]), str(res["createDate"]), str(res["source"])
+            )
+        console.log("Finger Rule Info:", style="green")
+        console.print(tables)
+        return True
+
+    def show_config(*args, **kwargs) -> bool:
+        # Display configuration file information
+        config_file_path = os.path.expanduser('~/')+".kunyu.ini"
+        with open(config_file_path) as file:
+            logger.info(file.read())
+        return True
+
+    def show(self):
+        tables = DisposeTables().result_table(COMMAND_INFO)
+        command_info = [
+            ["page", self.command_getter("page"), "Set Search Page"],
+            ["dtype", self.command_getter("dtype"), "Set Associated/Subdomain Search Schema"],
+            ["stype", self.command_getter("stype"), "Set data type IPV4/IPV6 (option v4/v6)"],
+            ["btype", self.command_getter("btype"), "Set BatchFile Search Schema"],
+            ["timeout", self.command_getter("timeout"), "Set HTTP Requests Timeout"],
+            ["thread", self.command_getter("thread"), "Set PupilSearch Thread Number"],
+            ["deep", self.command_getter("deep"), "Set PupilSearch Search Deep"],
+            ["all", self.command_getter("all"), "PupilSearch Add All Url To Check List"],
+            ["fuzz", self.command_getter("fuzz"), "PupilSearch Add Api To Check List"],
+            ["proxy", self.command_getter("proxy"), "PupilSearch HTTP Proxy"]
+        ]
+        for info in command_info:
+            tables.add_row(
+                str(info[0]), str(info[1]), str(info[2])
+            )
+        console.log("Global Command Info:", style="green")
+        console.print(tables)
+
+    def command_clear(*args, **kwargs):
+        subprocess.call(cmd, shell=True)
+
+    def command_exit(*args, **kwargs):
+        raise KeyboardInterrupt
+
+    def command_help(self):
+        console.print(eval(self.module).help)
+
+    def command_set(self):
+        return CommandCompleter.command_setter(self, CommandCompleter.line)
+
+    def command_exportpath(*args, **kwargs):
+        logger.info(setting.OUTPUT_PATH)
+
 
 class BaseInterpreter(object):
     global_help = ""
     OUTPUT_PATH = None
 
     def __init__(self):
-        self.module = "ZoomEye"
+        self.module = CommandCompleter.module
         self.complet = eval(self.module).Command_Info
         self.setup()
         # Create output directory
@@ -73,23 +153,6 @@ class BaseInterpreter(object):
     def parse_line(self, line):
         command, _, args = line.strip().partition(" ")
         return command, args.strip()
-
-    def setter(self, line):
-        """"
-        :line set options
-        """
-        args, _, number = line.strip().partition("=")
-        args, number = args.strip(), number.strip()
-        if hasattr(eval(self.module), args):
-            setattr(eval(self.module), args, number)
-
-        return True
-
-    def getter(self, line):
-        """"
-        :return options value
-        """
-        return getattr(eval(self.module), line)
 
     @property
     def prompt(self):
@@ -136,79 +199,25 @@ class BaseInterpreter(object):
     def default_completer(self, *ignored):
         return []
 
-    def show_rule(self):
-        tables = Table(show_header=True, style="bold")
-        for cloumn in RULE_INFO:
-            tables.add_column(
-                cloumn, justify="center", overflow="ignore"
-            )
-        # Display fingerprint file information
-        for res in setting.RULE_PARMAS:
-            tables.add_row(
-                str(res["KXID"]), str(res["author"]), str(res["kx_name"]),str(res["description"]),
-                str(res["kx_query"]), str(res["createDate"]), str(res["source"])
-            )
-        console.log("Finger Rule Info:", style="green")
-        console.print(tables)
-        return True
-
-    def show_config(self):
-        # Display configuration file information
-        config_file_path = os.path.expanduser('~/')+".kunyu.ini"
-        with open(config_file_path) as file:
-            logger.info(file.read())
-        return True
-
     def auxiliary(self, command, line=None):
         """"Set how to handle basic commands
         :return True/False
         """
-        if command == "clear":
-            subprocess.call(cmd, shell=True)
-            return True
-        elif command == "exit":
-            raise KeyboardInterrupt
-
-        elif command == "help":
-            console.print(eval(self.module).help)
-            return True
-        elif command == "set":
-            return self.setter(line)
-
+        CommandCompleter.line = line
         # show Global Command Info
-        elif command == "show":
-            if line == "rule":
-                return self.show_rule()
-            elif line == "config":
-                return self.show_config()
-            table = Table(show_header=True, style="bold")
-            for cloumn in COMMAND_INFO:
-                table.add_column(
-                    cloumn, justify="center", overflow="fold"
-                )
-            command_info = [["page", self.getter("page"),"Set Search Page"],
-                            ["dtype", self.getter("dtype"), "Set Associated/Subdomain Search Schema"],
-                            ["stype", self.getter("stype"), "Set data type IPV4/IPV6 (option v4/v6)"],
-                            ["btype", self.getter("btype"), "Set BatchFile Search Schema"],
-                            ["timeout", self.getter("timeout"), "Set HTTP Requests Timeout"]]
-            for info in command_info:
-                table.add_row(
-                    str(info[0]), str(info[1]), str(info[2])
-                )
-            console.log("Global Command Info:", style="green")
-            console.print(table)
+        if command == "show":
+            if line in ["rule", "config"]:
+                return eval("CommandCompleter.{}_{}()".format(command, line))
+            CommandCompleter().show()
             return True
-        elif command == "exportpath":
-            # Return Export Path
-            logger.info(setting.OUTPUT_PATH)
+
+        elif command in CommandCompleter.command_func_params:
+            eval("CommandCompleter.command_{}(self)".format(command))
             return True
 
         elif command in OS_SYSTEM:
-            try:
-                command_os = "{} {}".format(command, line)
-                os.system(command_os)
-            except KeyboardInterrupt:
-                print("")
+            command_os = "{} {}".format(command, line)
+            os.system(command_os)
             return True
 
         return False
@@ -223,11 +232,11 @@ class BaseInterpreter(object):
                 if self.auxiliary(command, args) or not command:
                     continue
                 command_handler = self.get_command_handler(command)
-                command_handler(args)
+                try:
+                    command_handler(args)
+                except KeyboardInterrupt:
+                    print("")
 
-            except EOFError:
-                logger.info("kunyu Console mode stopped")
-                break
             except KeyboardInterrupt:
                 logger.info("kunyu Console mode stopped")
                 try:
@@ -237,7 +246,7 @@ class BaseInterpreter(object):
                 sys.exit(0)
 
             except Exception as err:
-                # console.print(err)
+                console.print(err)
                 continue
 
 
