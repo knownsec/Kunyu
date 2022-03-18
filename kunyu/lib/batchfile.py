@@ -51,13 +51,15 @@ def getresult(func):
 @getresult
 def __check_file_ip(ip):
     # Check IP legitimacy
-    return True if re.search(IP_ADDRESS_REGEX, ip) else logger.warning(ip + ":It's an illegal IP address")
+    return True if re.search(IP_ADDRESS_REGEX, ip) \
+        else logger.warning(ip + ":It's an illegal IP address")
 
 
 @getresult
 def __check_file_domain(domain):
     # Check DOMAIN legitimacy
-    return True if re.search(DOMAIN_CHECK_REGEX, domain) else logger.warning(domain + ":It's an illegal Domain")
+    return True if re.search(DOMAIN_CHECK_REGEX, domain) \
+        else logger.warning(domain + ":It's an illegal Domain")
 
 
 # Get the contents of the Domain list.

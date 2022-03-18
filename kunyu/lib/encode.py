@@ -83,30 +83,25 @@ class EncodeHash:
 def encode_md5(filename):
     return filename, True
 
-
 # Calculate mmh3 Hash
 @EncodeHash
 def encode_mmh3(filename):
     return filename, False
 
-
 # encode hex
 def encode_hex(string):
     return int(string, 16)
-
 
 # encode base64
 def encode_base64(string):
     bytes_str = string.encode("utf-8")
     return str(base64.b64encode(bytes_str).decode("utf-8"))
 
-
 # Cert series number calculate Hash
 def cert_encode(hostname):
     try:
-        c = ssl.create_default_context()
         host = re.sub(HTTP_CHECK_REGEX, '', hostname)
-        s = c.wrap_socket(socket.socket(), server_hostname=host)
+        s = ssl.create_default_context().wrap_socket(socket.socket(), server_hostname=host)
         s.settimeout(5)
         s.connect((host, 443))
         # Return Hexadecimal code
