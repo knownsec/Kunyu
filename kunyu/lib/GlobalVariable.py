@@ -1,7 +1,7 @@
 """
 @author: 风起
 @contact: onlyzaliks@gmail.com
-@File: export.py
+@File: GlobalVariable.py
 @Time: 2022/3/18 15:53
 """
 
