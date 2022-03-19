@@ -567,8 +567,7 @@ class ZoomEye:
             return logger.warning(
                 "No retrieval operation is performed or the length of the dictionary key value is exceeded"
             )
-        except Exception as err:
-            print(err)
+        except Exception:
             return logger.warning("Please enter appropriate parameters!")
 
     @classmethod
