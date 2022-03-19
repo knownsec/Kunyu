@@ -245,8 +245,7 @@ class BaseInterpreter(object):
                     pass
                 sys.exit(0)
 
-            except Exception as err:
-                console.print(err)
+            except Exception:
                 continue
 
 
