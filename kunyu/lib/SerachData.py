@@ -144,9 +144,9 @@ class DataHandler:
     # https://www.cnblogs.com/timelesszhuang/p/5014595.html
     # accesskey、appid、password、proxy token、
     def search_other(self):
-        # 使用正则捕获组来获取数据归属
+        # Use the regex capture group to get data ownership
         Jwt = "(?P<Jwt>(ey[A-Za-z0-9_-]{10,}\.[A-Za-z0-9._-]{10,}\.[A-Za-z0-9._-]{10,}|ey[A-Za-z0-9_\/+-]{10,}\.[A-Za-z0-9._\/+-]{10,}\.[A-Za-z0-9._-]{10,}))"
-        Ip = "(?P<Ip>((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3})"
+        Ip = "(?P<Ip>[\"\'\s/(]((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3})[\"\'\s/:\)]"
         Email = "(?P<Email>([a-zA-Z0-9][_|\.])*[a-zA-Z0-9]+@([a-zA-Z0-9][-|_|\.])*[a-zA-Z0-9]+\.((?!js|css|jpg|jpeg|png|ico|webp)[a-zA-Z]{2,}))"
         ChinaIdCard = "(?P<ChinaIdCard>[1-8][1-7]\d{4}(?:19|20)\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])\d{3}[\dX])"
         ChinaMobile = "(?P<ChinaMobile>[^\w]((?:(?:\+|00)86)?1(?:(?:3[\d])|(?:4[5-79])|(?:5[0-35-9])|(?:6[5-7])|(?:7[0-8])|(?:8[\d])|(?:9[189]))\d{8})[^\w])"
@@ -154,9 +154,9 @@ class DataHandler:
         SecretKey = "(?P<SecretKey>([Ss](ecret|ECRET)_?[Kk](ey|EY)|[Ss](ecret|ECRET)_?(id|ID|Id)|[Ss](ecret|ECRET))[^)(|]{0,10}[=:][A-Za-z0-9\"'\s]{2,30}[\"'])"
         AppId = "(?P<AppId>([Aa](pp|PP)_?[Ii][dD]|[Aa](pp|PP)_?[Kk](ey|EY)|[Aa](pp|PP)_?[Ss](ecret|ECRET))[^)(|]{0,10}[=:][\s\"\']{1,5}[^):'\"+(|]{5,30}[\"'])"
         UserName = "(?P<UserName>([Uu](ser|SER)_?[Nn](ame|AME))[^)(|,\"'\+]{0,10}[=:][\s\"\']{1,5}[^)(|\s=,]{2,30}[\"'])"
-        PassWord = "(?P<PassWord>([Pp](ass|ASS)_?[Ww](ord|ORD|D|d))[^)(|,\"'\+]{0,10l}[=:][\s\"\']{1,5}[^)(|\s=]{2,30}[\"'])"
+        PassWord = "(?P<PassWord>([Pp](ass|ASS)_?[Ww](ord|ORD|D|d))[^)(|,\"'\+]{0,10}[=:][\s\"\']{1,5}[^)(|\s=]{2,30}[\"'])"
 
-        # Not tested.
+        # did not test
         SSHKey = "(?P<SSHKey>-----BEGIN PRIVATE KEY-----[a-zA-Z0-9\\S]{100,}-----END PRIVATE KEY——)"
         RSAKey = "(?P<RSAKey>-----BEGIN RSA PRIVATE KEY-----[a-zA-Z0-9\\S]{100,}-----END RSA PRIVATE KEY-----)"
         GithubAccessKey = "(?P<GithubAccessKey>[a-zA-Z0-9_-]*:[a-zA-Z0-9_\\-]+@github\\.com*)"
