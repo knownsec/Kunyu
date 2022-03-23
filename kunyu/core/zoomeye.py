@@ -562,13 +562,15 @@ class ZoomEye:
                     raise ArithmeticError
                 Pupil().response_main(raw_data)
             else:
-                raise Exception
+                raise ValueError
         except ArithmeticError:
             return logger.warning(
                 "No retrieval operation is performed or the length of the dictionary key value is exceeded"
             )
-        except Exception:
+        except ValueError:
             return logger.warning("Please enter appropriate parameters!")
+        except Exception as err:
+            console.print(err)
 
     @classmethod
     def command_createmap(cls, *args, **kwargs):
