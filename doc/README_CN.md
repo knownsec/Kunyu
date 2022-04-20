@@ -96,6 +96,7 @@ Global commands:
         Seebug <query>                            Search Seebug vulnerability information
         set <option>                              Set Global arguments values
         view/views <ID>                           Look over banner row data information
+        Cscan <IP>/<Port>                 		  Scans port information about cobaltStrike
         PupilSearch <URL>/<ID>                    Example Query sensitive interfaces
         Pocsuite3                                 Invoke the pocsuite component
         ExportPath                                Returns the path of the output file
@@ -201,6 +202,18 @@ SearchIcon /root/favicon.ico
 命令格式：**views ID**
 
 ![](../images/views.png)
+
+**Cscan扫描cobaltStrike的端口信息**  
+
+Cscan是Kunyu 1.7.2版本的一个新特性，允许您使用此命令来识别网络资产是否为cobaltStrike，并列举配置文件的详细信息。  
+
+**命令格式:**
+
+Cscan 1.1.1.1 443  
+
+Cscan 1.1.1.1 443, 80  
+
+![](../images/cscan.png)
 
 **PupilSearch敏感信息收集**
 
