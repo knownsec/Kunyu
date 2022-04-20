@@ -96,7 +96,7 @@ Global commands:
         Seebug <query>                            Search Seebug vulnerability information
         set <option>                              Set Global arguments values
         view/views <ID>                           Look over banner row data information
-        Cscan <IP>/<Port>                 		  Scans port information about cobaltStrike
+        Cscan <IP>/<Port>                 	  Scans port information about cobaltStrike
         PupilSearch <URL>/<ID>                    Example Query sensitive interfaces
         Pocsuite3                                 Invoke the pocsuite component
         ExportPath                                Returns the path of the output file
