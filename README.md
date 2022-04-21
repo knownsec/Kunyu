@@ -95,6 +95,7 @@ Global commands:
         Seebug <query>                            Search Seebug vulnerability information
         set <option>                              Set Global arguments values
         view/views <ID>                           Look over banner row data information
+        Cscan <IP>/<Port>                         Scans port information about cobaltStrike
         PupilSearch <URL>/<ID>                    Example Query sensitive interfaces
         Pocsuite3                                 Invoke the pocsuite component
         ExportPath                                Returns the path of the output file
@@ -118,7 +119,7 @@ ZoomEye:
 	deep   					  Set PupilSearch Search Deep(default is 2)
 	all  					  PupilSearch Add All Url To Check List
 	fuzz   					  PupilSearch Add Api To Check List
-    	proxy  					  PupilSearch HTTP Proxy
+        proxy  					  PupilSearch HTTP Proxy
 	
 ```
 
@@ -201,6 +202,18 @@ The user can also view the SSL certificate information of the specified serial n
 Command format: **views ID**
 
 ![](./images/views.png)
+
+**Cscan Scans port information about cobaltStrike**
+
+Cscan, a new feature in Kunyu version 1.7.2, allows you to use this command to identify whether a network asset is cobaltStrike and to enumerate configuration file details.
+
+**Command format:**
+
+Cscan 1.1.1.1 443
+
+Cscan 1.1.1.1 443,80
+
+![](./images/cscan.png)
 
 **PupilSearch Sensitive Information Collection**
 

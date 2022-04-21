@@ -199,6 +199,7 @@ class ZoomEye:
         Seebug <query>                            Search Seebug vulnerability information
         set <option>                              Set Global arguments values
         view/views <ID>                           Look over banner row data information
+        Cscan <IP>/<Port>                         Scans port information about cobaltStrike
         PupilSearch <URL>/<ID>                    Example Query sensitive interfaces and information
         Pocsuite3                                 Invoke the pocsuite component
         ExportPath                                Returns the path of the output file
@@ -210,7 +211,7 @@ class ZoomEye:
 
     # ZoomEye Command List
     Command_Info = ["help", "info", "set", "Seebug", "SearchWeb", "SearchHost", "SearchIcon", "HostCrash",
-                    "SearchBatch", "SearchCert", "SearchDomain", "EncodeHash", "Pocsuite3", "ExportPath",
+                    "SearchBatch", "SearchCert", "SearchDomain", "EncodeHash", "Pocsuite3", "ExportPath","Cscan",
                     "show", "clear", "view", "DirectoryCrash", "AliveScan","views", "PupilSearch", "CreateMap", "exit"]
 
     def __init__(self):
@@ -269,11 +270,6 @@ class ZoomEye:
                         except:
                             pass
 
-                        # Set the Latitude and longitude information
-                        if data.geoinfo.location:
-                            lat = data.geoinfo.location.lat
-                            lon = data.geoinfo.location.lon
-
                         # Set the output field
                         table.add_row(str(num), data.ip, str(data.portinfo.port), str(data.portinfo.service),
                                       str(data.portinfo.app), str(data_isp), str(data.geoinfo.country.names.en),
@@ -284,10 +280,14 @@ class ZoomEye:
                                        str(data.portinfo.app), str(data_isp), str(data.geoinfo.country.names.en),
                                        str(data.geoinfo.city.names.en), str(title), str(data.timestamp).split("T")[0]]
 
-                        # Set scatter_params info
-                        self.scatter_params.append({
-                            "lng": str(lon), "lat": str(lat), "ip": data.ip
-                        })
+                        # Set the Latitude and longitude information
+                        if data.geoinfo.location:
+                            lat = data.geoinfo.location.lat
+                            lon = data.geoinfo.location.lon
+                            # Set scatter_params info
+                            self.scatter_params.append({
+                                "lng": str(lon), "lat": str(lat), "ip": data.ip
+                            })
 
                         self.scan_alive_params.append({
                                 "ip":data.ip,
@@ -625,7 +625,6 @@ class ZoomEye:
         """
         Verify the current viability of the last retrieval result
         """
-        from kunyu.utils.convert import convert
         ip_port_params, num = cls.scan_alive_params, 0
         table = DisposeTables().result_table(ALIVE_SCAN_INFO ,overflow)
         logger.info("IP Service Viability Scan:")
@@ -634,7 +633,7 @@ class ZoomEye:
             for data in ip_port_params:
                 try:
                     num += 1
-                    alive_status = convert(Scan_Alive_Ip().scan_port_status(data["ip"], data["port"]))
+                    alive_status = cls.convert(Scan_Alive_Ip().scan_port_status(data["ip"], data["port"]))
                     table.add_row(
                         str(num), alive_status.ip, str(alive_status.port), str(alive_status.state)
                     )
@@ -642,3 +641,17 @@ class ZoomEye:
                     continue
         logger.info("IP Service Viability Scan is completed\n")
 
+    @classmethod
+    def command_cscan(cls, args):
+        try:
+            # Check whether a parameter exists
+            if args == "":
+                raise ArithmeticError
+            # Get args ip and search
+            ip, _, port = args.strip().partition(" ")
+            logger.info("Cscan scan results:")
+            scan_result = Scan_Alive_Ip().scan_cobaltstrike_status(ip, port)
+            console.print(scan_result)
+            logger.info("Cobaltstrike Scan is completed\n")
+        except ArithmeticError:
+            return logger.warning("Please Input IP and Port")

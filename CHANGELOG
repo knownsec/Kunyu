@@ -4,22 +4,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v1.7.1] - 2021-3-22
+## [v1.7.2] - 2022-4-20
+### Added
+- Added the Cscan command,Scans port information about cobaltStrike
+- Fixed LAT/LON missing bug
+
+## [v1.7.1] - 2022-3-22
 ### Added
 - Improved the pupilsearch regex
 - Fixed a problem with HTTP domain name re recognition errors
 
-## [v1.7.0] - 2021-3-18
+## [v1.7.0] - 2022-3-18
 ### Added
 - Part of the code has been refactored to optimize the program structure
 - Added "PupilSearch" command
 
-## [v1.6.5] - 2021-2-25
+## [v1.6.5] - 2022-2-25
 ### Added
 - Added The retrieval results were scanned for viability
 - Fixed some module incompatibilities
 
-## [v1.6.4] - 2021-1-4
+## [v1.6.4] - 2022-1-4
 ### Added
 - Added "show rule"/"show config" command
 - Added the function of loading fingerprint files externally

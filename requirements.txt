@@ -10,7 +10,7 @@ colorama
 pocsuite3
 colorlog
 setuptools
-pyee==7.0.3
+pyee==8.2.0
 urllib3
 beautifulsoup4
 requests-html
