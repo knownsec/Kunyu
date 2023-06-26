@@ -47,7 +47,8 @@ class Seebug:
             resp = requests.get(
                 "%s?%s" % (SEARCH_API, urlencode(cls.param)),
                 headers=cls.headers,
-                verify=False
+                verify=False,
+                timeout=10
             )
             return json.loads(resp.text)
 

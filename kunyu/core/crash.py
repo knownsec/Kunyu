@@ -62,7 +62,8 @@ class HostScan:
                     DOMAIN_SEARCH_API,
                     data=self.params,
                     headers=self.headers,
-                    verify=False
+                    verify=False,
+                    timeout=10
                 )
                 self.__check_error(json.loads(resp.text))
                 return resp.json()

