@@ -17,6 +17,7 @@ from colorama import init
 from rich.console import Console
 
 from kunyu.config import setting
+from kunyu.lib.ipLookUpHelper import get_ip_location
 from kunyu.utils.log import logger
 from kunyu.core.rule import YamlRule
 from kunyu.lib.export import createdir
@@ -33,6 +34,7 @@ PLATFORM = platform.system()
 cmd = "cls" if PLATFORM == "Windows" else "clear"
 console = Console(color_system="auto", record=True)
 
+
 def readline_available():
     """
     Check if the readline is available. By default
@@ -47,7 +49,7 @@ def auto_completion(completion=None, console=None):
         return
     readline.set_completer_delims(" ")
     readline.set_completer(console)
-    readline.parse_and_bind("tab: complete")
+    readline.parse_and_bind('bind ^I rl_complete') if PLATFORM == "Darwin" else readline.parse_and_bind("tab: complete")
 
 class CommandCompleter:
     module = "ZoomEye"
@@ -79,16 +81,17 @@ class CommandCompleter:
         # Display fingerprint file information
         for res in setting.RULE_PARMAS:
             tables.add_row(
-                str(res["KXID"]), str(res["author"]), str(res["kx_name"]),str(res["description"]),
+                str(res["KXID"]), str(res["author"]), str(res["kx_name"]), str(res["description"]),
                 str(res["kx_query"]), str(res["createDate"]), str(res["source"])
             )
         console.log("Finger Rule Info:", style="green")
         console.print(tables)
         return True
 
-    def show_config(*args, **kwargs) -> bool:
+    @staticmethod
+    def show_config(**kwargs) -> bool:
         # Display configuration file information
-        config_file_path = os.path.expanduser('~/')+".kunyu.ini"
+        config_file_path = os.path.expanduser('~/') + ".kunyu.ini"
         with open(config_file_path) as file:
             logger.info(file.read())
         return True
@@ -97,8 +100,10 @@ class CommandCompleter:
         tables = DisposeTables().result_table(COMMAND_INFO)
         command_info = [
             ["page", self.command_getter("page"), "Set Search Page"],
+            ["size", self.command_getter("size"), "Set Search Quantity Per Page"],
+            ["fields", self.command_getter("fields"), "Set the response field information"],
             ["dtype", self.command_getter("dtype"), "Set Associated/Subdomain Search Schema"],
-            ["stype", self.command_getter("stype"), "Set data type IPV4/IPV6 (option v4/v6)"],
+            ["stype", self.command_getter("stype"), "Set Data Type IPV4/IPV6 (Option V4/V6)"],
             ["btype", self.command_getter("btype"), "Set BatchFile Search Schema"],
             ["timeout", self.command_getter("timeout"), "Set HTTP Requests Timeout"],
             ["thread", self.command_getter("thread"), "Set PupilSearch Thread Number"],
@@ -143,6 +148,8 @@ class BaseInterpreter(object):
         # Import rule file param
         if Path(setting.RULE_FILE_PATH).exists():
             setting.RULE_PARMAS = YamlRule().get_yaml_list()
+
+        setting.API_URL = setting.MERGE_SEARCH_API if get_ip_location() else setting.MERGE_SEARCH_API_ABROAD
 
     def setup(self):
         """ Initialization of third-party libraries

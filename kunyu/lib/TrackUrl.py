@@ -36,7 +36,7 @@ class Track:
         self.proxy = gbv.proxy
 
         if self.proxy:
-            console.print(self.proxy)
+            console.log("PupilMain Proxy Start!")
             scheme = parse.urlparse(gbv.proxy).scheme
             self.proxy={
                 scheme:self.proxy

@@ -7,16 +7,17 @@
 @Time: 2021/6/24 22:18
 """
 
-import os
-import sys
-import json
-import random
 import datetime
+import json
+import os
+import platform
+import re
+import random
+import sys
 
 import requests
-import platform
-from rich.live import Live
 from rich.console import Console
+from rich.live import Live
 
 try:
     import pocsuite3
@@ -36,32 +37,33 @@ from kunyu.lib.export import export_xls
 from kunyu.lib.batchfile import get_file
 from kunyu.utils.tables import DisposeTables
 from kunyu.core.scanalive import Scan_Alive_Ip
-from kunyu.config.setting import UA, USER_INFO_API, HOST_SEARCH_API, WEB_SEARCH_API, DOMAIN_SEARCH_API, HOST_SCAN_INFO, \
-    SEMSITIVE_INFO, RULE_PARMAS, ALIVE_SCAN_INFO
+from kunyu.config.setting import UA, USER_INFO_API, MERGE_SEARCH_API, MERGE_SEARCH_API_ABROAD, ZOOMEYE_FIELDS_MERGE_SEARCH, DOMAIN_SEARCH_API, \
+    HOST_SCAN_INFO, \
+    ALIVE_SCAN_INFO
 from kunyu.core.PupilMain import Pupil, ParaInit
 from kunyu.core.createmap import create_data_map
 from kunyu.utils.log import logger, logger_console
 from kunyu.config.__version__ import __help__, init
 
 console = Console(color_system="auto", record=True)
-overflow = "fold" if platform.system() == "Darwin" else "ignore"
-
 ZOOMEYE_KEY = conf.get("zoomeye", "apikey")
 ZOOMEYE_TOKEN = conf.get("login", "token")
-
+PLATFORM = platform.system()
 params = {}
 
 
 class ZoomeyeSearch(object):
     def __init__(self, method):
+        self.fields = None
         self.auth = None
         self.search = None
         self.stype = None
         self.page = 1
+        self.size = 10
         self.method = method
         self.headers = {
             "User-Agent": random.choice(UA),
-            "author": "ZoomEye KunYu"
+            "Author": "ZoomEye Kunyu"
         }
 
     def __call__(self, func):
@@ -70,9 +72,11 @@ class ZoomeyeSearch(object):
             req_list = []
             login_url = func(self, *args, **kwargs)
             params["sub_type"] = self.stype
+            params["fields"] = str(self.fields)
+            params['pagesize'] = self.size
             try:
                 for num in range(int(self.page)):
-                    params['query'], params['page'] = self.search, (num + 1)
+                    params['qbase64'], params['page'] = self.search, (num + 1)
                     req_list.append(self.__request(login_url, data=params, headers=self.headers))
             except requests.HTTPError as err:
                 logger.warning(err)
@@ -93,7 +97,7 @@ class ZoomeyeSearch(object):
         if self.method == "GET":
             resp = requests.get(
                 login_url,
-                data=data,
+                data=json.dumps(data),
                 headers=headers,
                 timeout=time,
                 verify=False
@@ -101,7 +105,7 @@ class ZoomeyeSearch(object):
         else:
             resp = requests.post(
                 login_url,
-                data=data,
+                data=json.dumps(data),
                 headers=headers,
                 timeout=time,
                 verify=False
@@ -139,8 +143,8 @@ class ZoomeyeSearch(object):
 
 
 # After the SDK public,The interface to get the data.
-@ZoomeyeSearch(method="GET")
-def _dork_search(self, url, search, page, sub_type):
+@ZoomeyeSearch(method="POST")
+def _dork_search(self, url, search, page, sub_type, size, fields):
     """"The logic layer of ZoomEye processes the requested data
         and feeds it back to the request layer to obtain the original data
     """
@@ -148,8 +152,10 @@ def _dork_search(self, url, search, page, sub_type):
         if int(page) <= 0 or page is None:
             raise ArithmeticError
         self.page = page
+        self.size = size
         self.search = search
         self.stype = sub_type.lower()
+        self.fields = fields
         return url
 
     except ArithmeticError:
@@ -159,6 +165,14 @@ def _dork_search(self, url, search, page, sub_type):
 
 
 @ZoomeyeSearch(method="GET")
+def _dork_search_domain(self, url):
+    try:
+        return url
+    except Exception as e:
+        logger.error(e)
+
+
+@ZoomeyeSearch(method="POST")
 # Get ZoomEye User Info
 def _user_info(self):
     return USER_INFO_API
@@ -177,42 +191,42 @@ class GlobalVar:
 
 # The Display class of the tool
 class ZoomEye:
-    from kunyu.config.setting import ZOOMEYE_FIELDS_HOST, ZOOMEYE_FIELDS_WEB, ZOOMEYE_FIELDS_INFO, ZOOMEYE_FIELDS_DOMAIN
+    from kunyu.config.setting import ZOOMEYE_FIELDS_MERGE, ZOOMEYE_FIELDS_INFO, ZOOMEYE_FIELDS_DOMAIN
     from kunyu.utils.convert import convert
     ssl_data_params, raw_data_params, sensitive_params, scatter_params, scan_alive_params = {}, {}, [], [], []
-    page, dtype, timeout = 1, 0, 30
+    page, dtype, timeout, size, fields = 1, 0, 30, 10, "default"
     stype, btype = "v4", "host"
     thread, deep, all, fuzz, proxy = 10, 2, False, False, False
 
     # Global commands List
     help = """Global commands:
-        info                                      Print User info
-        SearchHost <query>                        Basic Host search
-        SearchWeb <query>                         Basic Web search
-        SearchIcon <File>/<URL>                   Icon Image search
-        SearchBatch <File>                        Batch search Host
-        SearchCert <Domain>                       SSL certificate Search
-        SearchDomain <Domain>                     Domain name associated/subdomain search
-        EncodeHash <encryption> <query>           Encryption method interface (base64/hex/md5/mmh3)
-        HostCrash <IP> <Domain>                   Host Header Scan hidden assets
-        show <config>/<rule>                      Show can set options or Kunyu config
-        Seebug <query>                            Search Seebug vulnerability information
-        set <option>                              Set Global arguments values
-        view/views <ID>                           Look over banner row data information
-        Cscan <IP>/<Port>                         Scans port information about cobaltStrike
-        PupilSearch <URL>/<ID>                    Example Query sensitive interfaces and information
-        Pocsuite3                                 Invoke the pocsuite component
-        ExportPath                                Returns the path of the output file
-        CreateMap                                 Generate an IP distribution heat map
-        AliveScan                                 The viability of the last retrieval
-        clear                                     Clear the console screen
-        help                                      Print Help info
+        info                                      Print User Info
+        Search <Query>                            Comprehensive Information Search
+        SearchIcon <File>/<URL>                   Query Based On Icon Image
+        SearchBatch <File>                        Batch Query Assets In Files
+        SearchCert <Domain>                       SSL Certificate Search
+        SearchDomain <Domain>                     Domain Name Associated/Subdomain Search
+        EncodeHash <Encryption> <Query>           Encryption Method Interface (Base64/HEX/MD5/mmh3)
+        HostCrash <IP> <Domain>                   Host Header Scan Hidden Assets
+        show <config>/<rule>                      Show Can Set Options Or Kunyu Config
+        Seebug <Query>                            Search Seebug Vulnerability Information
+        set <Option>                              Set Global Arguments Values
+        view/views <ID>                           Look Over Banner Row Data Information
+        Cscan <IP>/<Port>                         Scans Port Information About CobaltStrike
+        PupilSearch <URL>/<ID>                    Example Query Sensitive Interfaces And Information
+        CDNAnalysis <Domain>                      Identify Whether The Domain Name Is a CDN Asset
+        Pocsuite3                                 Invoke The Pocsuite Component
+        ExportPath                                Returns The Path Of The Output File
+        CreateMap                                 Generate An IP Distribution Heat Map
+        AliveScan                                 The Viability Of The Last Retrieval
+        clear                                     Clear The Console Screen
+        help                                      Print Help Info
         exit                                      Exit KunYu & """
 
     # ZoomEye Command List
-    Command_Info = ["help", "info", "set", "Seebug", "SearchWeb", "SearchHost", "SearchIcon", "HostCrash",
-                    "SearchBatch", "SearchCert", "SearchDomain", "EncodeHash", "Pocsuite3", "ExportPath","Cscan",
-                    "show", "clear", "view", "DirectoryCrash", "AliveScan","views", "PupilSearch", "CreateMap", "exit"]
+    Command_Info = ["help", "info", "set", "Seebug", "Search", "SearchIcon", "HostCrash", "CDNAnalysis",
+                    "SearchBatch", "SearchCert", "SearchDomain", "EncodeHash", "Pocsuite3", "ExportPath", "Cscan",
+                    "show", "clear", "view", "DirectoryCrash", "AliveScan", "views", "PupilSearch", "CreateMap", "exit"]
 
     def __init__(self):
         self.fields_tables = None
@@ -233,114 +247,85 @@ class ZoomEye:
         """
         self.__params_clear(self)
         GlobalVar.set_timeout_resp(self.timeout)
-        global total, api_url, result, FIELDS, export_host
-        result_type = "matches"
+        global total, result, FIELDS, table_fields
+        result_type = "data"
         total, num = 0, 0
         export_list = []
-
         # Gets the API for the call
-        api_url, FIELDS = HOST_SEARCH_API, self.ZOOMEYE_FIELDS_HOST
-        if types == "web":
-            api_url, FIELDS = WEB_SEARCH_API, self.ZOOMEYE_FIELDS_WEB
-        elif types == "domain":
+        FIELDS, fields_bool = self.ZOOMEYE_FIELDS_MERGE, ""
+        if self.fields == "default":
+            fields_bool = ",".join(ZOOMEYE_FIELDS_MERGE_SEARCH)
+        else:
+            fields_bool = self.fields
+            FIELDS = fields_bool.split(',')
+            FIELDS.insert(0, "ID")
+        if types == "domain":
             result_type = "list"
-            params['q'], params['type'] = search, self.dtype
-            api_url, FIELDS = DOMAIN_SEARCH_API, self.ZOOMEYE_FIELDS_DOMAIN
-
-        table = DisposeTables().result_table(FIELDS, overflow)
+            setting.API_URL, FIELDS = f"{DOMAIN_SEARCH_API}?q={search}&type={self.dtype}&page={self.page}", self.ZOOMEYE_FIELDS_DOMAIN
+            dork_search_method = _dork_search_domain(setting.API_URL)
+        else:
+            dork_search_method = _dork_search(setting.API_URL, search, self.page, self.stype, self.size, fields_bool)
+        table = DisposeTables().result_table(FIELDS)
         # Get data information
-        for result in _dork_search(api_url, search, self.page, self.stype):
+        for result in dork_search_method:
             try:
                 total = result['total']
-                webapp_name, server_name, db_name, system_os, language = "", "", "", "", ""
                 for i in range(len(result[result_type])):
                     num += 1
-                    title, data_isp = "", ""
+                    title = ""
                     data = self.convert(result[result_type][i])
-                    if api_url == HOST_SEARCH_API:
-                        if data.portinfo.title:
-                            title = data.portinfo.title[0]
-
+                    if setting.API_URL == MERGE_SEARCH_API or MERGE_SEARCH_API_ABROAD:
                         try:
-                            data_isp = data.geoinfo.isp
-                            # Reset the <raw Data Params> element
-                            self.raw_data_params[num] = data.portinfo.banner
+                            if hasattr(data,"title"):
+                                data["title"] = data.title[0] if data["title"] and data["title"] != [] else ""
+                            if hasattr(data,"lat") and hasattr(data,"lon"):
+                                # Set scatter_params info
+                                self.scatter_params.append({
+                                    "lng": str(data.lon), "lat": str(data.lat), "ip": data.ip
+                                })
                             # Reset the <ssl raw Data Params> element
                             self.ssl_data_params[num] = data.ssl
-                        except:
-                            pass
-
-                        # Set the output field
-                        table.add_row(str(num), data.ip, str(data.portinfo.port), str(data.portinfo.service),
-                                      str(data.portinfo.app), str(data_isp), str(data.geoinfo.country.names.en),
-                                      str(data.geoinfo.city.names.en), str(title), str(data.timestamp).split("T")[0])
-
-                        # Set the exported fields
-                        export_host = [str(num), data.ip, str(data.portinfo.port), str(data.portinfo.service),
-                                       str(data.portinfo.app), str(data_isp), str(data.geoinfo.country.names.en),
-                                       str(data.geoinfo.city.names.en), str(title), str(data.timestamp).split("T")[0]]
-
-                        # Set the Latitude and longitude information
-                        if data.geoinfo.location:
-                            lat = data.geoinfo.location.lat
-                            lon = data.geoinfo.location.lon
-                            # Set scatter_params info
-                            self.scatter_params.append({
-                                "lng": str(lon), "lat": str(lat), "ip": data.ip
-                            })
-
-                        self.scan_alive_params.append({
-                                "ip":data.ip,
-                                "port":str(data.portinfo.port)
-                        })
-
-                    elif api_url == WEB_SEARCH_API:
-                        # Because of the problem of returning the default value of the field
-                        if data.webapp:
-                            webapp_name = self.convert(data.webapp[0]).name
-                        if data.server:
-                            server_name = self.convert(data.server[0]).name
-                        if data.db:
-                            db_name = self.convert(data.db[0]).name
-                        if data.language:
-                            language = data.language[0]
-                        if data.system:
-                            system_os = self.convert(data.system[0]).name
-
-                        # Set the output field
-                        table.add_row(
-                            str(num), data.ip[0], str(data.site), str(data.title),
-                            str(system_os), str(webapp_name), str(db_name),
-                            str(language), str(server_name), str(data.timestamp).split("T")[0]
-                        )
-
-                        # Set the exported fields
-                        export_host = [str(num), data.ip[0], str(data.site), str(data.title),
-                                       str(system_os), str(webapp_name), str(db_name),
-                                       str(language), str(server_name), str(data.timestamp).split("T")[0]]
-
-                        try:
                             # Reset the <raw Data Params> element
-                            self.raw_data_params[num] = data.raw_data
-                            self.ssl_data_params[num] = data.ssl
-                        except:
+                            self.raw_data_params[num] = data.body
+                            # Set the Latitude and longitude information
+                            self.scan_alive_params.append({
+                                "ip": data.ip,
+                                "port": str(data.port)
+                            })
+                        except Exception:
                             pass
-
+                        # 玄学bug之一，能跑就行哈哈哈。
+                        try:
+                            if hasattr(data, "update_time"):
+                                data["update_time"] = data["update_time"].split("T")[0]
+                        except Exception:
+                            pass
+                        if self.fields == "default":
+                            # Set the output field
+                            table_fields = [
+                                str(num), data.ip, str(data.port), str(data.protocol),
+                                str(data.service), str(data["isp.name"]), str(data["country.name"]),
+                                str(data["city.name"]), str(data["title"]), str(data["update_time"])
+                            ]
+                        else:
+                            table_fields = [str(num)]
+                            for key in self.fields.split(','):
+                                if key in data:
+                                    table_fields.append(str(data[key]))
+                        table.add_row(*table_fields)
                     elif types == "domain":
                         # Set the output field
                         table.add_row(
                             str(num), str(data.name), str(data.ip), str(data.timestamp)
                         )
                         # Set the exported fields
-                        export_host = [str(num), str(data.name), str(data.ip), str(data.timestamp)]
-                    export_list.append(export_host)
-
+                        table_fields = [str(num), str(data.name), str(data.ip), str(data.timestamp)]
+                    export_list.append(table_fields)
                 if export_list:
                     export_xls(export_list, FIELDS)
             except Exception as err:
                 logger.error(err)
                 continue
-
         # Check if the result set is empty
         if total > 0:
             console.log("search result amount:", total, style="green")
@@ -353,23 +338,24 @@ class ZoomEye:
 
     @classmethod
     def command_info(cls, *args):
+        from rich.pretty import pprint
         """ return user info"""
         info = cls.convert(_user_info()[0])
         # Calculate the total quota for the month
-        search_quota = int(info.quota_info.remain_free_quota) + int(info.quota_info.remain_pay_quota)
-        table = DisposeTables().result_table(cls.ZOOMEYE_FIELDS_INFO, overflow)
-        info.user_info.expired_at = None if info.user_info.expired_at == "" else info.user_info.expired_at
+        search_subscription = int(info.data.subscription.points) + int(info.data.subscription.zoomeye_points)
+        table = DisposeTables().result_table(cls.ZOOMEYE_FIELDS_INFO)
+        end_date = None if info.data.subscription.end_date == "" else info.data.subscription.end_date
         console.log("User Information:", style="green")
         table.add_row(
-            str(info.user_info.name), str(info.user_info.role),
-            str(search_quota), str(info.user_info.expired_at)
+            str(info.data.username), str(info.data.subscription.plan),
+            str(search_subscription), str(end_date)
         )
         console.print(table)
         logger.info("User information retrieval is completed\n")
 
     @classmethod
     # ZoomEye host search method
-    def command_searchhost(cls, search):
+    def command_search(cls, search):
         # Checks whether the fingerprint rule file exists
         if setting.RULE_PARMAS is not None:
             # Traverses to find whether the specified fingerprint rule number exists
@@ -377,12 +363,12 @@ class ZoomEye:
                 if item_dict["KXID"] == search:
                     # Replace with the value in the specified fingerprint rule number
                     search = item_dict["kx_query"]
-        return cls.__command_search(cls, search)
+        return cls.__command_search(cls, encode.encode_base64(search))
 
-    @classmethod
-    # ZoomEye web search method
-    def command_searchweb(cls, search):
-        return cls.__command_search(cls, search, types="web")
+    # @classmethod
+    # # ZoomEye web search method
+    # def command_searchweb(cls, search):
+    #     return cls.__command_search(cls, search, types="web")
 
     @classmethod
     # domain name associated / subdomain Search
@@ -398,14 +384,10 @@ class ZoomEye:
             :param filename: Accept the IP file path as a parameter
         """
         search = ""
-        # Use ZooEye batch query mode,Search: "ip:1.1.1.1 ip:2.2.2.2 ip:3.3.3.3"
+        # Use ZooEye batch query mode,Search: "ip=1.1.1.1 ip=2.2.2.2 ip=3.3.3.3"
         for ip in get_file(filename):
-            search += "ip:{} ".format(ip)
-        # Determine the type of interface used
-        if cls.btype == "host":
-            return cls.command_searchhost(search)
-
-        return cls.command_searchweb(search)
+            search += "ip={} || ".format(ip)
+        return cls.command_search(search.rstrip("||"))
 
     @classmethod
     # ZoomEye SSL Cert Search
@@ -416,7 +398,7 @@ class ZoomEye:
         """
         cert_hex_encode = encode.cert_encode(hostname)
         if cert_hex_encode is not None:
-            return cls.__command_search(cls, "ssl:" + str(cert_hex_encode))
+            return cls.__command_search(cls, "ssl=" + str(cert_hex_encode))
 
     @classmethod
     # ZoomEye Icon Image Search
@@ -426,10 +408,10 @@ class ZoomEye:
             According to the input parameters, judge and calculate the ico icon hash of the url or file path
             :param filename: Enter the specified URL or Icon file path
         """
-        icon_hash = str(encode.encode_mmh3(filename))
+        icon_hash = str(encode.encode_md5(filename))
         if icon_hash != "":
             logger.info("iconhash:" + icon_hash)
-            return cls.command_searchhost("iconhash:" + icon_hash)
+            return cls.command_search("iconhash=" + icon_hash)
 
     @classmethod
     # Encode hex/md5/mmh3/base64 Hash
@@ -496,13 +478,13 @@ class ZoomEye:
         """
         try:
             # If the key parameter is not specified, the key parameter is automatically set to 1
-            serials = 1 if serial is "" else serial
+            serials = 1 if serial == "" else serial
             raw_data = cls.raw_data_params.get(int(serials))
             # Check whether the returned result is None
             if raw_data is None:
                 raise ArithmeticError
             # Check whether the returned result is ""
-            elif raw_data is "":
+            elif raw_data == "":
                 logger.warning("Banner information is empty")
             else:
                 console.log("Banner Information is:\n", style="green")
@@ -526,7 +508,7 @@ class ZoomEye:
         """
         try:
             # If the key parameter is not specified, the key parameter is automatically set to 1
-            serials = 1 if serial is "" else serial
+            serials = 1 if serial == "" else serial
             ssl_raw_data = cls.ssl_data_params.get(int(serials))
             # Check whether the returned result is None
             if ssl_raw_data is None:
@@ -567,6 +549,8 @@ class ZoomEye:
             return logger.warning(
                 "No retrieval operation is performed or the length of the dictionary key value is exceeded"
             )
+        except KeyboardInterrupt:
+            return logger.warning("PupilMain Terminate Operation!")
         except ValueError:
             return logger.warning("Please enter appropriate parameters!")
         except Exception as err:
@@ -605,11 +589,11 @@ class ZoomEye:
             # Determines whether the result set is empty
             if not result_list:
                 return logger.warning("The query result is empty\n")
-            table = DisposeTables().result_table(HOST_SCAN_INFO, overflow)
+            table = DisposeTables().result_table(HOST_SCAN_INFO)
             # Set output list content
             for res in result_list:
                 table.add_row(
-                    str(res[0]), str(res[1]),str(res[2])
+                    str(res[0]), str(res[1]), str(res[2])
                 )
             # Output table list to console
             console.print(table)
@@ -626,19 +610,19 @@ class ZoomEye:
         Verify the current viability of the last retrieval result
         """
         ip_port_params, num = cls.scan_alive_params, 0
-        table = DisposeTables().result_table(ALIVE_SCAN_INFO ,overflow)
+        table = DisposeTables().result_table(ALIVE_SCAN_INFO)
         logger.info("IP Service Viability Scan:")
-        # Polling output table content
-        with Live(table, refresh_per_second=4):
-            for data in ip_port_params:
-                try:
+        try:
+            # Polling output table content
+            with Live(table, refresh_per_second=4):
+                for data in ip_port_params:
                     num += 1
                     alive_status = cls.convert(Scan_Alive_Ip().scan_port_status(data["ip"], data["port"]))
                     table.add_row(
                         str(num), alive_status.ip, str(alive_status.port), str(alive_status.state)
                     )
-                except Exception:
-                    continue
+        except Exception as e:
+            return logger.error(e)
         logger.info("IP Service Viability Scan is completed\n")
 
     @classmethod
@@ -649,9 +633,31 @@ class ZoomEye:
                 raise ArithmeticError
             # Get args ip and search
             ip, _, port = args.strip().partition(" ")
-            logger.info("Cscan scan results:")
+            logger.info("Cscan Scan Results:")
             scan_result = Scan_Alive_Ip().scan_cobaltstrike_status(ip, port)
             console.print(scan_result)
             logger.info("Cobaltstrike Scan is completed\n")
         except ArithmeticError:
             return logger.warning("Please Input IP and Port")
+
+    @classmethod
+    def command_cdnanalysis(cls, args):
+        exec_program = ""
+        try:
+            # Check whether a parameter exists
+            if args == "":
+                raise ArithmeticError
+            if PLATFORM == "Darwin":
+                exec_program = "darwin"
+            elif PLATFORM == "Linux":
+                exec_program = "linux"
+            elif PLATFORM == "Windows":
+                exec_program = "windows.exe"
+            cdn_exec_program_path = str(
+                os.path.abspath(os.path.dirname(os.path.dirname(__file__))) + f"/lib/cdn/{exec_program}").replace(
+                "\\", "/")
+            logger.info("Domain CDN Analysis Results:")
+            os.system(f'{cdn_exec_program_path} {args}')
+            logger.info("CDN Analysis is completed\n")
+        except ArithmeticError:
+            return logger.warning("Please Enter The Domain Name You Want to Identify")
