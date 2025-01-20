@@ -6,7 +6,7 @@
 
 中文文档 | [English](../README.md)
 
-![](../images/Kunyu 2.png)
+![](../images/Kunyu2.png)
 # 0x00 介绍
 
 ## 工具介绍
