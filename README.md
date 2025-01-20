@@ -5,7 +5,7 @@
 --------------
 English | [中文文档](./doc/README_CN.md)
 
-![](./images/Kunyu 2.png)
+![](./images/Kunyu2.png)
 
 # 0x00 Introduce
 
