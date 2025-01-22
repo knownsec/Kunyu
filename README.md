@@ -113,7 +113,7 @@ Global commands:
 ```
 ZoomEye:
         page <Number>       		The number of pages returned by the query (default:1)
-        size <Number>.      		Set the number of searches per page (default:10)
+        size <Number>      		Set the number of searches per page (default:10)
         fields <fields>     		Set the response field information
         dtype <0/1>         		Query associated domain name/subdomain name
         stype <v4/v6>       		stype <v4/v6> Set to get data type IPV4 or IPV6
