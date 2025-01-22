@@ -84,7 +84,7 @@ kunyu console
 
 ```
 Global commands:
-				info                                      Print User Info
+        info                                      Print User Info
         Search <Query>                            Comprehensive Information Search
         SearchIcon <File>/<URL>                   Query Based On Icon Image
         SearchBatch <File>                        Batch Query Assets In Files
@@ -112,18 +112,18 @@ Global commands:
 
 ```
 ZoomEye:
-        page <Number>       				查询返回页数(默认查询一页)
-        size <Number>.      				设置每页搜索数量(默认值为每页查询10条)
-        fields <fields>     				设置响应字段信息，具体以readme给出字段为准
-        dtype <0/1>         				查询关联域名/子域名(设置0为查询关联域名，反之为子域名)
-        stype <v4/v6>       				设置获取数据类型IPV4或IPV6，默认为 ipv4,ipv6 全选
-        btype <host/web>    				设置批量查询的API接口(默认为HOST)
-        timeout <num>       				设置Kunyu HTTP请求的超时时间
-        thread              				设置PupilSearch线程数量(默认为10)
-        deep                				设置PupilSearch递归深度(默认为2)
-        all                 				PupilSearch Add All Url To Check List
-        fuzz                				PupilSearch Add Api To Check List
-        proxy               				PupilSearch HTTP Proxy
+        page <Number>       		查询返回页数(默认查询一页)
+        size <Number>      		设置每页搜索数量(默认值为每页查询10条)
+        fields <fields>     		设置响应字段信息，具体以readme给出字段为准
+        dtype <0/1>         		查询关联域名/子域名(设置0为查询关联域名，反之为子域名)
+        stype <v4/v6>       		设置获取数据类型IPV4或IPV6，默认为 ipv4,ipv6 全选
+        btype <host/web>    		设置批量查询的API接口(默认为HOST)
+        timeout <num>       		设置Kunyu HTTP请求的超时时间
+        thread              		设置PupilSearch线程数量(默认为10)
+        deep                		设置PupilSearch递归深度(默认为2)
+        all                 		PupilSearch Add All Url To Check List
+        fuzz                		PupilSearch Add Api To Check List
+        proxy               		PupilSearch HTTP Proxy
 ```
 
 ## 使用案例
