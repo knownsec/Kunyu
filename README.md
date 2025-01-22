@@ -112,18 +112,18 @@ Global commands:
 
 ```
 ZoomEye:
-        page <Number>       			The number of pages returned by the query (default:1)
-        size <Number>.      			Set the number of searches per page (default:10)
-        fields <fields>     			Set the response field information
-        dtype <0/1>         			Query associated domain name/subdomain name
-        stype <v4/v6>       			stype <v4/v6> Set to get data type IPV4 or IPV6
-        btype <host/web>    			Set the API interface for batch query
-        timeout <num>       			Set the timeout period of Kunyu HTTP request
-        thread              			Set PupilSearch Thread Number(default is 10)
-        deep                			Set PupilSearch Search Deep(default is 2)
-        all                 			PupilSearch Add All Url To Check List
-        fuzz                			PupilSearch Add Api To Check List
-        proxy               			PupilSearch HTTP Proxy
+        page <Number>       		The number of pages returned by the query (default:1)
+        size <Number>.      		Set the number of searches per page (default:10)
+        fields <fields>     		Set the response field information
+        dtype <0/1>         		Query associated domain name/subdomain name
+        stype <v4/v6>       		stype <v4/v6> Set to get data type IPV4 or IPV6
+        btype <host/web>    		Set the API interface for batch query
+        timeout <num>       		Set the timeout period of Kunyu HTTP request
+        thread              		Set PupilSearch Thread Number(default is 10)
+        deep                		Set PupilSearch Search Deep(default is 2)
+        all                 		PupilSearch Add All Url To Check List
+        fuzz                		PupilSearch Add Api To Check List
+        proxy               		PupilSearch HTTP Proxy
 	
 ```
 
