@@ -51,13 +51,13 @@ P.S. Windows同样支持python3 setup.py install
 ```
 
 # 0x02 配置说明
-在第一次运行程序时通过输入以下命令进行初始化操作，提供了其他登录方式，但是推荐使用API的方式，因为用户名/密码登录需要额外做一次请求，所以理论上API的方式会更加高效。
+在第一次运行程序时通过输入以下命令进行初始化操作，提供了其他登录方式，推荐使用API的方式（用户名/密码登录已弃用）。
 ```
 kunyu init --apikey <your zoomeye key> --seebug <your seebug key>
 ```
 ![](../images/setinfo.png)
 
-初次使用需要通过ZoomEye登录凭证，才使用该工具进行信息收集，目前ZoomEye注册用户每月赠送1w条查询额度，足够日常工作使用。
+初次使用需要通过ZoomEye登录凭证，才使用该工具进行信息收集，目前ZoomEye API需付费使用。
 
 **ZoomEye访问地址：https://www.zoomeye.org/**
 
@@ -273,6 +273,10 @@ Cscan 1.1.1.1 443, 80
 ![](../images/cscan.png)
 
 **CDNAnalysis（NEW）**
+
+注意通过代码编译的方式使用Kunyu，默认不提供该功能模块，如果需要添加该功能，需要自行编译并添加到kunyu运行路径下的/lib/cdn/路径下，根据使用操作系统不同分别命名为**linux、darwin、windows.exe**使用即可。
+
+https://github.com/wikiZ/CDN-Discovery
 
 **命令格式：**
 

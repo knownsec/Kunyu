@@ -61,7 +61,6 @@ Usage:
     kunyu init -h
     kunyu init --output /root/kunyu/output
     kunyu init --apikey "xxxxx911-6D2A-12345-4e23-64exxxxx6fb"
-    kunyu init --username "404@knownsec.com" --password "P@ssword"
     kunyu init --seebug "012345200157abcdef981bcc89a1452c34d62b8c"
     kunyu init --apikey "01234567-acbd-0000" --seebug "a73503200157" (recommend)
     kunyu init --serverless "https://service-xxxxx-xxxxxxx.sh.apigw.tencentcs.com:443"

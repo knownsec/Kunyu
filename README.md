@@ -51,13 +51,13 @@ P.S. Windows also supports python3 setup.py install.
 ```
 
 # 0x02 Configuration instructions
-When you run the program for the first time, you can initialize by entering the following command. Other login methods are provided. However, it is recommended to use the API method. Because the user name/password login requires an additional request, the API method is theoretically more efficient. 
+When you run the program for the first time, enter the following command to initialize the operation. Other login methods are provided, and the API method is recommended (username/password login is deprecated).
 ```
 kunyu init --apikey <your zoomeye key> --seebug <your seebug key>
 ```
 ![](./images/setinfo.png)
 
-The first time you use it, you need to use the ZoomEye login credentials to use this tool to collect information.Currently, ZoomEye registered users are given 1w query quota every month, which is enough for daily work.
+The first time you use it, you need to use ZoomEye login credentials to use the tool to collect information. Currently, ZoomEye API requires payment.
 
 ZoomEye access address: https://www.zoomeye.org/
 
@@ -274,6 +274,10 @@ Cscan 1.1.1.1 443,80
 ![](./images/cscan.png)
 
 **CDNAnalysis（NEW）**
+
+Note that when using Kunyu through code compilation, this function module is not provided by default. If you need to add this function, you need to compile it yourself and add it to the /lib/cdn/ path under the kunyu running path. Name it **linux**, darwin**, and windows.exe** according to the operating system used.
+
+https://github.com/wikiZ/CDN-Discovery
 
 **Command format:**
 

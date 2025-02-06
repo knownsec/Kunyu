@@ -653,6 +653,8 @@ class ZoomEye:
                 exec_program = "linux"
             elif PLATFORM == "Windows":
                 exec_program = "windows.exe"
+            else:
+                logger.warning("Functional module not found！")
             cdn_exec_program_path = str(
                 os.path.abspath(os.path.dirname(os.path.dirname(__file__))) + f"/lib/cdn/{exec_program}").replace(
                 "\\", "/")
