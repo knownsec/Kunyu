@@ -1,4 +1,6 @@
 mmh3
+lxml
+lxml_html_clean
 pyyaml==5.3.1
 requests
 tld
@@ -10,7 +12,9 @@ colorama
 pocsuite3
 colorlog
 setuptools
-pyee==8.2.0
-urllib3
+pyee==11.0.1
+urllib3==1.26.20
 beautifulsoup4
 requests-html
+bs4
+websockets==10.2

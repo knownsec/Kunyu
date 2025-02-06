@@ -5,6 +5,8 @@
 --------------
 English | [中文文档](./doc/README_CN.md)
 
+![](./images/Kunyu2.png)
+
 # 0x00 Introduce
 
 ## Tool introduction
@@ -49,13 +51,13 @@ P.S. Windows also supports python3 setup.py install.
 ```
 
 # 0x02 Configuration instructions
-When you run the program for the first time, you can initialize by entering the following command. Other login methods are provided. However, it is recommended to use the API method. Because the user name/password login requires an additional request, the API method is theoretically more efficient. 
+When you run the program for the first time, enter the following command to initialize the operation. Other login methods are provided, and the API method is recommended (username/password login is deprecated).
 ```
 kunyu init --apikey <your zoomeye key> --seebug <your seebug key>
 ```
 ![](./images/setinfo.png)
 
-The first time you use it, you need to use the ZoomEye login credentials to use this tool to collect information.Currently, ZoomEye registered users are given 1w query quota every month, which is enough for daily work.
+The first time you use it, you need to use ZoomEye login credentials to use the tool to collect information. Currently, ZoomEye API requires payment.
 
 ZoomEye access address: https://www.zoomeye.org/
 
@@ -82,44 +84,46 @@ kunyu console
 
 ```
 Global commands:
-        info                                      Print User info
-        SearchHost <query>                        Basic Host search
-        SearchWeb <query>                         Basic Web search
-        SearchIcon <File>/<URL>                   Icon Image search
-        SearchBatch <File>                        Batch search Host
-        SearchCert <Domain>                       SSL certificate Search
-        SearchDomain <Domain>                     Domain name associated/subdomain search
-        EncodeHash <encryption> <query>           Encryption method interface 
-        HostCrash <IP> <Domain>                   Host Header Scan hidden assets
-        show <config>/<rule>                      Show can set options or Kunyu config
-        Seebug <query>                            Search Seebug vulnerability information
-        set <option>                              Set Global arguments values
-        view/views <ID>                           Look over banner row data information
-        Cscan <IP>/<Port>                         Scans port information about cobaltStrike
-        PupilSearch <URL>/<ID>                    Example Query sensitive interfaces
-        Pocsuite3                                 Invoke the pocsuite component
-        ExportPath                                Returns the path of the output file
-        CreateMap                                 Generate an IP distribution heat map
-        AliveScan                                 The viability of the last retrieval
-        clear                                     Clear the console screen
-        help                                      Print Help info
-        exit                                      Exit KunYu &
+        info                                      Print User Info
+        Search <Query>                            Comprehensive Information Search
+        SearchIcon <File>/<URL>                   Query Based On Icon Image
+        SearchBatch <File>                        Batch Query Assets In Files
+        SearchCert <Domain>                       SSL Certificate Search
+        SearchDomain <Domain>                     Domain Name Associated/Subdomain Search
+        EncodeHash <Encryption> <Query>           Encryption Method Interface (Base64/HEX/MD5/mmh3)
+        HostCrash <IP> <Domain>                   Host Header Scan Hidden Assets
+        show <config>/<rule>                      Show Can Set Options Or Kunyu Config
+        Seebug <Query>                            Search Seebug Vulnerability Information
+        set <Option>                              Set Global Arguments Values
+        view/views <ID>                           Look Over Banner Row Data Information
+        Cscan <IP>/<Port>                         Scans Port Information About CobaltStrike
+        PupilSearch <URL>/<ID>                    Example Query Sensitive Interfaces And Information
+        CDNAnalysis <Domain>                      Identify Whether The Domain Name Is a CDN Asset
+        Pocsuite3                                 Invoke The Pocsuite Component
+        ExportPath                                Returns The Path Of The Output File
+        CreateMap                                 Generate An IP Distribution Heat Map
+        AliveScan                                 The Viability Of The Last Retrieval
+        clear                                     Clear The Console Screen
+        help                                      Print Help Info
+        exit                                      Exit KunYu & 
 ```
 
 **OPTIONS**
 
 ```
 ZoomEye:
-	page <Number>    			  The number of pages returned by the query
-	dtype <0/1>      			  Query associated domain name/subdomain name
-	stype <v4/v6>				  stype <v4/v6> Set to get data type IPV4 or IPV6
-	btype <host/web> 			  Set the API interface for batch query
-	timeout <num>				  Set the timeout period of Kunyu HTTP request
-	thread  				  Set PupilSearch Thread Number(default is 10)
-	deep   					  Set PupilSearch Search Deep(default is 2)
-	all  					  PupilSearch Add All Url To Check List
-	fuzz   					  PupilSearch Add Api To Check List
-        proxy  					  PupilSearch HTTP Proxy
+        page <Number>       		The number of pages returned by the query (default:1)
+        size <Number>      		Set the number of searches per page (default:10)
+        fields <fields>     		Set the response field information
+        dtype <0/1>         		Query associated domain name/subdomain name
+        stype <v4/v6>       		stype <v4/v6> Set to get data type IPV4 or IPV6
+        btype <host/web>    		Set the API interface for batch query
+        timeout <num>       		Set the timeout period of Kunyu HTTP request
+        thread              		Set PupilSearch Thread Number(default is 10)
+        deep                		Set PupilSearch Search Deep(default is 2)
+        all                 		PupilSearch Add All Url To Check List
+        fuzz                		PupilSearch Add Api To Check List
+        proxy               		PupilSearch HTTP Proxy
 	
 ```
 
@@ -131,13 +135,65 @@ ZoomEye:
 
 ![](./images/userinfo.png)
 
-**HOST host search**
+**Comprehensive search（NEW）**
 
-![](./images/searchhost.png)
+![](./images/search.png)
 
-**Web host search**
+**Custom output fields（NEW）**
 
-![](./images/searchweb.png)
+For specific supported output custom fields, please refer to the following:
+
+| Field Name         | Type    | Description                                                  | Permission                  |
+| ------------------ | ------- | ------------------------------------------------------------ | --------------------------- |
+| ip                 | string  | IP address (used when the web asset is incomplete)           | All users                   |
+| domain             | string  | Domain                                                       | All users                   |
+| url                | string  | Full URL of the asset (for web assets)                       | All users                   |
+| ssl.jarm           | string  | SSL JARM fingerprint                                         | All users                   |
+| ssl.ja3s           | string  | SSL JA3S fingerprint                                         | All users                   |
+| iconhash_md5       | string  | MD5 value of the icon image                                  | Professional plan and above |
+| robots_md5         | string  | MD5 value of the robots.txt file                             | Business plan and above     |
+| security_md5       | string  | MD5 value of the security settings file                      | Business plan and above     |
+| hostname           | string  | Hostname information                                         | All users                   |
+| os                 | string  | Operating system information                                 | All users                   |
+| port               | integer | Port number                                                  | All users                   |
+| service            | string  | Provided application protocol (e.g., HTTP, SSH)              | All users                   |
+| title              | list    | Webpage title                                                | All users                   |
+| version            | string  | Component version information                                | All users                   |
+| device             | string  | Device name                                                  | All users                   |
+| rdns               | string  | Reverse DNS information                                      | All users                   |
+| product            | string  | Product component information                                | All users                   |
+| header             | string  | HTTP response header information                             | All users                   |
+| header_hash        | string  | Hash calculated from HTTP response header                    | Professional plan and above |
+| banner             | string  | Service banner information                                   | All users                   |
+| body               | string  | HTML Body content                                            | Business plan and above     |
+| body_hash          | string  | Hash calculated from the HTML body                           | Professional plan and above |
+| update_time        | string  | Asset update time                                            | All users                   |
+| header.server.name | string  | Server name in the HTTP response header                      | All users                   |
+| continent.name     | string  | Name of the continent                                        | All users                   |
+| country.name       | string  | Name of the country                                          | All users                   |
+| province.name      | string  | Name of the province                                         | All users                   |
+| city.name          | string  | Name of the city                                             | All users                   |
+| isp.name           | string  | ISP name                                                     | All users                   |
+| organization.name  | string  | Organization name                                            | All users                   |
+| zipcode            | integer | Postal code                                                  | All users                   |
+| idc                | string  | Is it an IDC (0 for no, 1 for yes)                           | All users                   |
+| lon                | string  | Geolocation longitude                                        | All users                   |
+| lat                | string  | Geolocation latitude                                         | All users                   |
+| asn                | string  | Autonomous System Number                                     | All users                   |
+| protocol           | string  | Transport layer protocol (e.g., TCP, UDP)                    | All users                   |
+| honeypot           | integer | Is it a honeypot (0 for no, 1 for yes)                       | All users                   |
+| ssl                | string  | SSL x509 certificate information                             | All users                   |
+| primary_industry   | string  | Primary industry information                                 | Business plan and above     |
+| sub_industry       | string  | Sub-industry information                                     | Business plan and above     |
+| rank               | integer | Asset importance ranking, the higher the score, the more important. | Business plan and above     |
+
+**Settings to change default output fields**
+
+```
+Set fields = ip,port
+```
+
+![](./images/fields.png)
 
 **Batch IP search**
 
@@ -149,9 +205,10 @@ When collecting corporate assets, we can use this method to retrieve the same ic
 
 **Command format:** 
 
+```
 SearchIocn https://www.baidu.com/favicon.ico 
-
 SearchIcon /root/favicon.ico 
+```
 
 ![](./images/searchico.png)
 
@@ -209,11 +266,27 @@ Cscan, a new feature in Kunyu version 1.7.2, allows you to use this command to i
 
 **Command format:**
 
+```
 Cscan 1.1.1.1 443
-
 Cscan 1.1.1.1 443,80
+```
 
 ![](./images/cscan.png)
+
+**CDNAnalysis（NEW）**
+
+Note that when using Kunyu through code compilation, this function module is not provided by default. If you need to add this function, you need to compile it yourself and add it to the /lib/cdn/ path under the kunyu running path. Name it **linux**, darwin**, and windows.exe** according to the operating system used.
+
+https://github.com/wikiZ/CDN-Discovery
+
+**Command format:**
+
+```
+CDNAnalysis --file ip.txt
+CDNAnalysis --domain www.baidu.com
+```
+
+![](./images/CDNAnalysis.png)
 
 **PupilSearch Sensitive Information Collection**
 
@@ -249,12 +322,14 @@ In some scenarios, you can use this command to perform common HASH encryption/en
 
 **Command format:** 
 
+```
 EncodeHash hex 7239dcc9beb5c9cd795415f9
 EncodeHash md5 https://www.baidu.com/favicon.ico
 EncodeHash md5 /root/favicon.ico
 EncodeHash mmh3 https://www.baidu.com/favicon.ico
 EncodeHash mmh3 /root/favicon.ico
 EncodeHash base64 dasdasdsa
+```
 
 ![](./images/encode.png)
 
@@ -324,13 +399,12 @@ Through HOSTS collision, the hidden assets in the intranet can be effectively co
 
 **Command format:** 
 
+```
 HostCrash C:\ip.txt C:\host.txt 
-
 HostCrash C:\ip.txt baidu.com 
-
 HostCrash 1.1.1.1 baidu.com 
-
 HostCrash 1.1.1.1 G:\host.txt 
+```
 
 **Example One** 
 
@@ -381,74 +455,93 @@ All search results are saved in the user's root directory, and the directory is 
 
 ​    Thanks to all the friends of KnownSec 404 Team.
 
-> "Seeing clearly" is a manifestation of ability, a "tool", and "visible" is a manifestation of thought, and the final link is "Dao." 
->
-> ​																																							 	   --SuperHei
+> "Seeing clearly" is the embodiment of ability, which is "tool", while "seeing" is the embodiment of thought, and the last thing it is related to is "Tao".	——SuperHei（黑哥）
 
 # 0x05 Issue
 
-**1、Multi-factor search**
+**1. Multi-factor search**
 
-ZoomEye search can use multi-factor search, dork:cisco +port:80 (note the space) can search all data that meet the conditions of cisco and port:80, if there is no space in between, it is the same search condition, it is that cisco is satisfied and the port is All data for 80. Kunyu's dork does not require quotation marks.
+ZoomEye search can use multi-factor search, dork: cisco +port:80 (note the space) can search for all data that meets the cisco and port:80 conditions. If there is no space in the middle, it is the same search condition, that is, all data that meets cisco and port 80. Kunyu's dork does not need quotation marks, **The new version 2.0 syntax has changed. **
 
-**2、High-precision geographical location**
+**2. High-precision geographic location**
 
-ZoomEye gives privileged users high-precision geographic location data, but it should be noted that ordinary users do not have this function, so I hope you know.
+ZoomEye gives privileged users high-precision geographic location data, but it should be noted that ordinary users do not have this function, please be aware.
 
-**3、Username/password login**
+**3. Username/password login**
 
-If you use username/password as the initialization condition, the token will be valid for 12 hours. If you find that your search cannot return data, you may wish to info. If the session times out, the initialization command prompt will be returned. In most cases, we recommend that you use the API KEY method, there is no invalidation problem. This design is also for the security of your account and password. After all, the API KEY can be reset and the token will become invalid. However, with the account and password, it is possible to log in to your ZoomEye account.
+If you use username/password as the initialization condition, the token obtained will be valid for 12 hours. If you find that your search cannot return data, you may as well info it. If the session times out, the initialization command prompt will be returned. In most cases, we recommend that you use the API KEY method, and there will be no expiration problem. This design is also for the security of your account and password. After all, the API KEY can be reset and the token will become invalid, but with the account and password, it is possible to log in to your ZoomEye account.
 
-**4、Cert certificate search**
+**4. Cert certificate search**
 
-It should be noted that, according to the normal logic, you need to encode the serial number of the target SSL certificate in hexadecimal to match the sentence search, but Kunyu only needs to provide the Domain address to search. The principle is to make a request to the target station to obtain the serial number and process it, but if your host cannot access the target that needs to be searched, it cannot be retrieved. At this time, you can also search with the sentence in the usual way.
+It should be noted that according to conventional logic, you need to encode the serial number of the target SSL certificate in hexadecimal before searching with the statement, but Kunyu only needs to provide the Domain address to search. The principle is to make a request to the target station to obtain the serial number and process it, but if your host cannot access the target to be searched, it cannot be retrieved. At this time, you can also use the conventional method to search with the statement.
 
-**5、Favicon icon search**
+**5. Favicon icon search**
 
-ico icon search not only supports URL retrieval, but also supports local ico icon file search, which has better scalability and compatibility.
+ico icon search supports both URL search and local ico icon file search, which has better scalability and compatibility.
 
-**6、Query data save path**
+**6. Query data storage path**
 
-By default, your query data is in the Kunyu folder under the user directory. You can also use the ExportPath command to query the path in the console mode.
+By default, your query data is in the Kunyu folder under the user directory. You can also use the ExportPath command in console mode to query the path.
 
-**7、Autocomplete**
+**7. Auto-completion**
 
-Kunyu's auto-completion supports upper and lower case, command logging, etc., use Tab to complete, please refer to Metasploit for usage.
+Kunyu's auto-completion supports uppercase and lowercase letters, command records, etc. Use Tab to complete. For usage, please refer to Metasploit.
 
-**8. Regarding the error when using pip install kunyu**
+**8. About the error when using pip install kunyu**
 
-The following error was reported when using pip install kunyu:
-`File "C:\Users\风起\AppData\Local\Programs\Python\Python37\Scripts\kunyu-script.py", line 1 SyntaxError: Non-UTF-8 code starting with'\xb7' in file C: \Users\风起\AppData\Local\Programs\Python\Python37\Scripts\kunyu-script.py on line 1, but no encoding declared; see http://python.org/dev/peps/pep-0263/ for details`
+When using pip install kunyu, the following error is reported:
+`File "C:\Users\风起\AppData\Local\Programs\Python\Python37\Scripts\kunyu-script.py", line 1 SyntaxError: Non-UTF-8 code starting with '\xb7' in file C:\Users\风起\AppData\Local\Programs\Python\Python37\Scripts\kunyu-script.py on line 1, but no encoding declared; see http://python.org/dev/peps/pep-0263/ for details`
 
-**solution:**
-Modify the C:\Users\风起\AppData\Local\Programs\Python\Python37\Scripts\kunyu-script.py file and add # encoding: utf-8 at the beginning of the file.
-
-Then save it and you can use it normally. The bug appears because there is a Chinese name in the user's directory path, which usually appears on windows.
+Solution:
+Modify the C:\Users\风起\AppData\Local\Programs\Python\Python37\Scripts\kunyu-script.py file and add # encoding: utf-8 at the beginning of the file
+Then save it and it can be used normally. The reason for this bug is that there is a Chinese name in the user directory path, which usually appears on Windows.
 
 **9. Pocsuite3 module POC storage directory**
 
-When using the pocsuite3 module, if you want to add a new POC module, you can add a POC file in **project directory/pocsuite3/pocs/**. It should be noted that when using the packaged Kunyu console command, you should add the POC to this directory, and repackage the Kunyu program to load the POC normally. 
+When using the pocsuite3 module, if you want to add a new POC module, you can add the POC file in **project directory/pocsuite3/pocs/**. It should be noted that when using the packaged Kunyu console command, the POC should be added to the directory, and the kunyu program should be repackaged to load the POC normally.
 
-**10. Pocsuite3 module POC missing issue**
+**10. Pocsuite3 module POC missing problem**
 
-When using the Pocsuite command linkage, if it is a packaged Kunyu version, the poc has been fixed. At this time, modifying the poc directory cannot add new modules. At this time, you can repackage it or use the **project directory/kunyu /console.py** Run kunyu to update the poc module in real time. 
+When using the Pocsuite command linkage, if it is a packaged Kunyu version, the poc has been fixed. At this time, modifying the poc directory cannot add a new module. At this time, you can repackage it or use **project directory/kunyu/console.py** to run kunyu to update the poc module in real time.
 
-**11. Kunyu can execute system commands as follows. ** 
+**11. Kunyu executable system commands are as follows. **
 
 **Windows:**
-        OS_SYSTEM = [**"ipconfig", "dir", "whoami", "ping", "telnet", "cd", "findstr", "chdir","find", "mysql", "type", "curl", "netstat", "tasklist", "taskkill", "tracert", "del", "ver","nmap"]**
+OS_SYSTEM = [**"ipconfig", "dir", "whoami", "ping", "telnet", "cd", "findstr", "chdir","find", "mysql", "type", "curl", "netstat", "tasklist", "taskkill", "tracert", "del", "ver","nmap","ls"**]
 
-**Linux/Mac：**
+**Linux/Mac:**
 
-​	OS_SYSTEM = [**"ifconfig", "ls", "cat", "pwd", "whoami", "ping", "find", "grep", "telnet", "mysql", "cd", "vi", "more", "less", "curl", "ps", "netstat", "rm", "touch", "mkdir", "uname","nmap"]**
+ OS_SYSTEM = [**"ifconfig", "ls", "cat", "pwd", "whoami", "ping", "find", "grep", "telnet", "mysql", "cd", "vi", "more", "less", "curl", "ps", "netstat", "rm", "touch", "mkdir", "uname","nmap"**]
 
-**12, Kunyu operating environment** 
+**12. Kunyu operating environment**
 
-It is recommended to use Python3.2-3.9 version, other versions of Python3 may have unknown errors, **Python2 cannot be used**. 
+It is recommended to use Python3.2 - 3.12. Other versions of Python3 may have unknown errors. **Python2 cannot be used**.
 
-**13、Set the timeout period **
+**13. Set timeout**
 
-**If the HTTP request is not responded in time, it can be solved by increasing the timeout time, such as: set timeout = 50 **
+If the HTTP request is not responded to in time, you can solve it by increasing the timeout time, such as: set timeout = 50
+
+**14. Kunyu client startup time is long**
+
+Since Kunyu2.0 will identify and use domestic and foreign interfaces during the initialization phase, it may take a while to start and use, the time is 5-10 seconds.
+
+**15. RULE fingerprint storage location**
+
+The RULE fingerprint storage location can be configured and modified under ~/.kunyu.ini, and the default is under the compiled and run kunyu path.
+
+**16. View function cannot be used**
+
+The view function is in the ZoomEye update, and the business version membership is required to use it normally. The views function is not affected.
+
+**17. Abnormal BUG**
+
+Since the test environment is MAC OS, there may be incompatibility issues in other operating systems. Please feedback the ISSUE or contact the operation in time.
+
+**18. Antivirus software check**
+
+Kunyu may fail to start due to antivirus software checking files, please pay attention to this problem
+
+**19. I haven't decided yet ^_^**
 
 # 0x06 Contributions
 

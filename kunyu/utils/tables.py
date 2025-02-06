@@ -9,13 +9,14 @@
 
 from rich.table import Table
 
+
 class DisposeTables:
     def __init__(self) -> None:
         self.tables = Table(show_header=True, style="bold")
 
-    def result_table(self, title, overflow="ignore"):
+    def result_table(self, title):
         for cloumn in title:
             self.tables.add_column(
-                cloumn, justify="center", overflow=overflow
+                cloumn, justify="center", overflow="ignore"
             )
         return self.tables

@@ -7,12 +7,13 @@
 @Time: 2021/7/24
 '''
 
-
 import os
+
 try:
     from setuptools import setup, find_packages
 except ImportError:
     from distutils.core import setup
+
 
     def find_packages(where='.'):
         # os.walk -> list[(dirname, list[subdirs], list[files])]
@@ -21,7 +22,6 @@ except ImportError:
                 if "__init__.py" in fils]
 
 from kunyu.config.__version__ import __version__
-
 
 DEPENDENCIES = open('requirements.txt', 'r', encoding='utf-8').read().split('\n')
 README = open('README.md', 'r', encoding='utf-8').read()
@@ -51,6 +51,9 @@ setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
 )

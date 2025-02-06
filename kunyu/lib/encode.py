@@ -83,19 +83,23 @@ class EncodeHash:
 def encode_md5(filename):
     return filename, True
 
+
 # Calculate mmh3 Hash
 @EncodeHash
 def encode_mmh3(filename):
     return filename, False
 
+
 # encode hex
 def encode_hex(string):
     return int(string, 16)
+
 
 # encode base64
 def encode_base64(string):
     bytes_str = string.encode("utf-8")
     return str(base64.b64encode(bytes_str).decode("utf-8"))
+
 
 # Cert series number calculate Hash
 def cert_encode(hostname):
@@ -109,6 +113,3 @@ def cert_encode(hostname):
 
     except Exception:
         return logger.warning("Please confirm that the target uses HTTPS or is accessible")
-
-
-
