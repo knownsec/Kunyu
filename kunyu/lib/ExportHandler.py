@@ -31,9 +31,9 @@ class ExportHandler:
     # First match the internal network ip, and then filter the external network ip.
     # As long as there are two segments with more than 10 digits, it is considered to be an ip.
     def handler_ip(self):
-        a_pattern = "10\.(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|[0-9])\.(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|[0-9])\.(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|[0-9])"
-        b_pattern = "172\.(1[6789]|2[0-9]|3[01])\.(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|[0-9])\.(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|[0-9])"
-        c_pattern = "192\.168\.(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|[0-9])\.(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|[0-9])"
+        a_pattern = "10\\.(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|[0-9])\\.(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|[0-9])\\.(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|[0-9])"
+        b_pattern = "172\\.(1[6789]|2[0-9]|3[01])\\.(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|[0-9])\\.(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|[0-9])"
+        c_pattern = "192\\.168\\.(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|[0-9])\\.(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|[0-9])"
         d_pattern = "127.0.0.1"
         pattern = re.compile("{}|{}|{}|{}".format(a_pattern, b_pattern, c_pattern, d_pattern))
         removeip = []
@@ -41,7 +41,7 @@ class ExportHandler:
             # Non-intranet ip for processing
             if not re.search(pattern, ip):
                 sign = 0
-                for number in re.split("\.", ip):
+                for number in re.split("\\.", ip):
                     # Remove ip1 like 008.054.012.095, 084.043.126.085
                     if (len(number)) > 0 and int(number[0]) == 0:
                         removeip.append(ip)

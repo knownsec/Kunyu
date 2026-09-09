@@ -74,12 +74,12 @@ class DataHandler:
         # Among them, if it is in the form of http, the probability is an external link, and no traceback
         """
             js is divided into the following three types, which need to be filled in a targeted manner
-            ../../js/xxx.js fill protocol + domain name + path ^(\.\.|\.)
+            ../../js/xxx.js fill protocol + domain name + path ^(\\.\\.|\\.)
             //aaaaa.com/js/xxx.js padding protocol ^(//)
             /js/xxx.js Fill protocol + domain name ^(/)(?!/)
             js/xxx.js fill in the protocol + domain name + path + / and put it in the last elif
         """
-        pattern1 = re.compile('^(\.\.|\.)')
+        pattern1 = re.compile('^(\\.\\.|\\.)')
         pattern2 = re.compile('^(//)')
         pattern3 = re.compile('^(/)(?!/)')
         for script_item in self.soup.find_all(is_script_but_no_innerhtml):
@@ -145,16 +145,16 @@ class DataHandler:
     # accesskey、appid、password、proxy token、
     def search_other(self):
         # Use the regex capture group to get data ownership
-        Jwt = "(?P<Jwt>(ey[A-Za-z0-9_-]{10,}\.[A-Za-z0-9._-]{10,}\.[A-Za-z0-9._-]{10,}|ey[A-Za-z0-9_\/+-]{10,}\.[A-Za-z0-9._\/+-]{10,}\.[A-Za-z0-9._-]{10,}))"
-        Ip = "(?P<Ip>[\"\'\s/(]((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3})[\"\'\s/:\)]"
-        Email = "(?P<Email>([a-zA-Z0-9][_|\.])*[a-zA-Z0-9]+@([a-zA-Z0-9][-|_|\.])*[a-zA-Z0-9]+\.((?!js|css|jpg|jpeg|png|ico|webp)[a-zA-Z]{2,}))"
-        ChinaIdCard = "(?P<ChinaIdCard>[1-8][1-7]\d{4}(?:19|20)\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])\d{3}[\dX])"
-        ChinaMobile = "(?P<ChinaMobile>[^\w]((?:(?:\+|00)86)?1(?:(?:3[\d])|(?:4[5-79])|(?:5[0-35-9])|(?:6[5-7])|(?:7[0-8])|(?:8[\d])|(?:9[189]))\d{8})[^\w])"
-        AccessKey = "(?P<AccessKey>([Aa](ccess|CCESS)_?[Kk](ey|EY)|[Aa](ccess|CCESS)_?[sS](ecret|ECRET)|[Aa](ccess|CCESS)_?(id|ID|Id)|[Aa](ccess|CCESS)[A-Za-z0-9_-]{5,10})[A-Za-z0-9\"'\s]{0,10}[=:][\s\"\']{1,5}[A-Za-z0-9]{2,30}[\"'])"
-        SecretKey = "(?P<SecretKey>([Ss](ecret|ECRET)_?[Kk](ey|EY)|[Ss](ecret|ECRET)_?(id|ID|Id)|[Ss](ecret|ECRET))[^)(|]{0,10}[=:][A-Za-z0-9\"'\s]{2,30}[\"'])"
-        AppId = "(?P<AppId>([Aa](pp|PP)_?[Ii][dD]|[Aa](pp|PP)_?[Kk](ey|EY)|[Aa](pp|PP)_?[Ss](ecret|ECRET))[^)(|]{0,10}[=:][\s\"\']{1,5}[^):'\"+(|]{5,30}[\"'])"
-        UserName = "(?P<UserName>([Uu](ser|SER)_?[Nn](ame|AME))[^)(|,\"'\+]{0,10}[=:][\s\"\']{1,5}[^)(|\s=,]{2,30}[\"'])"
-        PassWord = "(?P<PassWord>([Pp](ass|ASS)_?[Ww](ord|ORD|D|d))[^)(|,\"'\+]{0,10}[=:][\s\"\']{1,5}[^)(|\s=]{2,30}[\"'])"
+        Jwt = "(?P<Jwt>(ey[A-Za-z0-9_-]{10,}\\.[A-Za-z0-9._-]{10,}\\.[A-Za-z0-9._-]{10,}|ey[A-Za-z0-9_\\/+-]{10,}\\.[A-Za-z0-9._\\/+-]{10,}\\.[A-Za-z0-9._-]{10,}))"
+        Ip = "(?P<Ip>[\"\'\\s/(]((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})(\\.((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})){3})[\"\'\\s/:\\)]"
+        Email = "(?P<Email>([a-zA-Z0-9][_|\\.])*[a-zA-Z0-9]+@([a-zA-Z0-9][-|_|\\.])*[a-zA-Z0-9]+\\.((?!js|css|jpg|jpeg|png|ico|webp)[a-zA-Z]{2,}))"
+        ChinaIdCard = "(?P<ChinaIdCard>[1-8][1-7]\\d{4}(?:19|20)\\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\\d|3[01])\\d{3}[\\dX])"
+        ChinaMobile = "(?P<ChinaMobile>[^\\w]((?:(?:\\+|00)86)?1(?:(?:3[\\d])|(?:4[5-79])|(?:5[0-35-9])|(?:6[5-7])|(?:7[0-8])|(?:8[\\d])|(?:9[189]))\\d{8})[^\\w])"
+        AccessKey = "(?P<AccessKey>([Aa](ccess|CCESS)_?[Kk](ey|EY)|[Aa](ccess|CCESS)_?[sS](ecret|ECRET)|[Aa](ccess|CCESS)_?(id|ID|Id)|[Aa](ccess|CCESS)[A-Za-z0-9_-]{5,10})[A-Za-z0-9\"'\\s]{0,10}[=:][\\s\"\']{1,5}[A-Za-z0-9]{2,30}[\"'])"
+        SecretKey = "(?P<SecretKey>([Ss](ecret|ECRET)_?[Kk](ey|EY)|[Ss](ecret|ECRET)_?(id|ID|Id)|[Ss](ecret|ECRET))[^)(|]{0,10}[=:][A-Za-z0-9\"'\\s]{2,30}[\"'])"
+        AppId = "(?P<AppId>([Aa](pp|PP)_?[Ii][dD]|[Aa](pp|PP)_?[Kk](ey|EY)|[Aa](pp|PP)_?[Ss](ecret|ECRET))[^)(|]{0,10}[=:][\\s\"\']{1,5}[^):'\"+(|]{5,30}[\"'])"
+        UserName = "(?P<UserName>([Uu](ser|SER)_?[Nn](ame|AME))[^)(|,\"'\\+]{0,10}[=:][\\s\"\']{1,5}[^)(|\\s=,]{2,30}[\"'])"
+        PassWord = "(?P<PassWord>([Pp](ass|ASS)_?[Ww](ord|ORD|D|d))[^)(|,\"'\\+]{0,10}[=:][\\s\"\']{1,5}[^)(|\\s=]{2,30}[\"'])"
 
         # did not test
         SSHKey = "(?P<SSHKey>-----BEGIN PRIVATE KEY-----[a-zA-Z0-9\\S]{100,}-----END PRIVATE KEY——)"
